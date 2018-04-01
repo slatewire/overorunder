@@ -155,7 +155,8 @@ apiRoutes.post('/authenticate', function(req, res) {
           // create a token with only our given payload
           // we don't want to pass in the entire user since that has the password
             const payload = {
-              admin: user.admin
+              admin: user.admin,
+              user: user.name
             };
             var token = jwt.sign(payload, app.get('superSecret'), {
               expiresIn: 60*60*24 // expires in 24 hours
@@ -210,13 +211,26 @@ apiRoutes.use(function(req, res, next) {
 // route to show a random message (GET http://localhost:8080/api/)
 apiRoutes.get('/', function(req, res) {
   res.json({ message: 'Welcome to the coolest API on earth!' });
+  console.log(req.decoded.userId);
 });
 
 // route to return all users (GET http://localhost:8080/api/users)
 apiRoutes.get('/users', function(req, res) {
-  User.find({}, function(err, users) {
-    res.json(users);
+
+  User.findOne({
+    name: req.decoded.user
+  }, function(err, user) {
+
+    if (err) throw err;
+
+    if (user) {
+      res.json({ success: true, message: 'found the user', user: user});
+    } // else if (!user) {}
   });
+
+  //User.find({}, function(err, users) {
+  //  res.json(users);
+  //});
 });
 
 // apply the routes to our application with the prefix /api

@@ -15,10 +15,12 @@ class OverOrUnder extends Component {
     super(props);
 
     this.state = {
-      message: ''
+      message: '',
+      myToken: '',
     };
 
     this.handleSignOut = this.handleSignOut.bind(this);
+    this.handleGetData = this.handleGetData.bind(this);
   }
 
   componentWillMount() {
@@ -27,6 +29,10 @@ class OverOrUnder extends Component {
     if(!isAuthed) {
       const { history } = this.props
       history.replace('/');
+    } else {
+      // could do extra defensive here!
+      const thisToken = localStorage.getItem('overUnderToken')
+      this.setState({myToken: thisToken});
     }
   }
 
@@ -39,12 +45,34 @@ class OverOrUnder extends Component {
 
   }
 
+  handleGetData () {
+
+    return fetch(`http://localhost:8080/api/users/`, {
+      headers: {
+        "Content-Type": 'application/x-www-form-urlencoded',
+        "x-access-token": this.state.myToken
+      }
+    }).then(response => {
+      return response.json();
+    }).then(jsonResponse => {
+
+      console.log('data response');
+      console.log(jsonResponse);
+      //if (jsonResponse.businesses) {
+        //return jsonResponse.businesses.map(business => ({
+        //
+        //}));
+      //}
+    });
+  }
+
 
   render() {
     return (
       <div>
         <h3>hi</h3>
         <Button className="goButton teal lighten-2" waves='green' node='a' onClick={this.handleSignOut}>Sign Out<Icon right>send</Icon></Button>
+        <Button className="goButton teal lighten-2" waves='green' node='a' onClick={this.handleGetData}>Get Data<Icon right>send</Icon></Button>
         <XoverY />
         <Trend />
         <StatsText />
