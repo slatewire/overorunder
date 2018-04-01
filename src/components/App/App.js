@@ -1,18 +1,25 @@
 import React, { Component } from 'react';
-import logo from '../../logo.svg';
+import { Switch, Route } from  'react-router-dom'
 import './App.css';
+import Home from '../Home/Home'
+import SignIn from '../SignIn/SignIn'
+import OverOrUnder from '../OverOrUnder/OverOrUnder'
+import Terms from '../Terms/Terms'
+import Reset from '../Reset/Reset'
+
 
 class App extends Component {
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div>
+        <Switch>
+          <Route exact path='/' component={Home}/>
+          <Route exact path='/signin/' component={SignIn}/>
+          <Route exact path='/terms/' component={Terms}/>
+          <Route exact path='/reset/' component={Reset}/>
+          <Route exact path='/overorunder/' component={OverOrUnder}/>
+        </Switch>
       </div>
     );
   }
