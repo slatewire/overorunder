@@ -233,6 +233,123 @@ apiRoutes.get('/users', function(req, res) {
   //});
 });
 
+
+
+
+
+
+apiRoutes.get('/userData', function(req, res) {
+
+
+  let d1 = new Date(18, 2, 1, 0, 0, 0, 0);
+  let d2 = new Date(18, 2, 2, 0, 0, 0, 0);
+  let d3 = new Date(18, 2, 3, 0, 0, 0, 0);
+  let d4 = new Date(18, 2, 4, 0, 0, 0, 0);
+  let d5 = new Date(18, 2, 5, 0, 0, 0, 0);
+  let d6 = new Date(18, 2, 6, 0, 0, 0, 0);
+  let d7 = new Date(18, 2, 7, 0, 0, 0, 0);
+  let d8 = new Date(18, 2, 8, 0, 0, 0, 0);
+  let d9 = new Date(18, 2, 9, 0, 0, 0, 0);
+  let d10 = new Date(18, 2, 10, 0, 0, 0, 0);
+
+
+      const date1 = {
+                    date: d10,
+                    dateState: "good"
+      };
+
+      const date2 = {
+                    date: d9,
+                    dateState: "bad"
+      };
+
+      const date3 = {
+                    date: d8,
+                    dateState: "bad"
+      };
+
+      const date4 = {
+                    date: d7,
+                    dateState: "good"
+      };
+
+      const date5 = {
+                    date: d6,
+                    dateState: "bad"
+      };
+
+      const date6 = {
+                    date: d5,
+                    dateState: "notSet"
+      };
+
+      const date7 = {
+                    date: d4,
+                    dateState: "good"
+      };
+
+      const date8 = {
+                    date: d3,
+                    dateState: "bad"
+      };
+
+      const date9 = {
+                    date: d2,
+                    dateState: "bad"
+      };
+
+      const date10 = {
+                    date: d1,
+                    dateState: "notSet"
+      };
+
+      const fakeDates = [date1, date2, date3, date4, date5, date6, date7, date8, date9, date10];
+
+
+      const fakeHabitData1 = {
+                            name: "exercise",
+                            over: 3,
+                            under: 5,
+                            notSet: 2,
+                            left: 20,
+                            total: 30,
+                            duration: "month",
+                            dates: fakeDates,
+                            default: false
+                            };
+
+      const fakeHabitData2 = {
+                            name: "drinking",
+                            over: 3,
+                            under: 5,
+                            notSet: 2,
+                            left: 20,
+                            total:30,
+                            duration: "month",
+                            dates: fakeDates,
+                            default: true
+                            };
+
+        const fakeHabits = [fakeHabitData1, fakeHabitData2];
+
+
+  res.json({ success: true, message: 'found the user', habits: fakeHabits});
+});
+
+
+apiRoutes.post('/updateDateState', function(req, res) {
+
+
+  res.json({ success: true, message: 'returned from stub'});
+
+});
+
+
+
+
+
+
+
 // apply the routes to our application with the prefix /api
 app.use('/api', apiRoutes);
 
