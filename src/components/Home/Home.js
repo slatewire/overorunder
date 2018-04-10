@@ -57,7 +57,7 @@ class Home extends React.Component {
           <h1 className="deep-orange-text text-accent-3">Under</h1>
         </header>
         <p className="flow-text">
-          Track your habit for the year.  Under or over is a fun way to see if you exercise more often than not, or drink more than you don't.
+          The social habit tracking game.
         </p>
         <div className="bottomDiv">
         <Button className="goButton teal lighten-2" waves='green' node='a' href='/signin'>get started<Icon right>send</Icon></Button>

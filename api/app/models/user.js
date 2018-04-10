@@ -1,14 +1,27 @@
 // get an instance of mongoose and mongoose.Schema
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var Habit = require('./habit');
 var bcrypt = require('bcrypt');
 var SALT_WORK_FACTOR = 10;
 
 var User = new Schema({
     name: { type: String, required: true, index: { unique: true } },
     password: { type: String, required: true },
-    admin : Boolean
-
+    admin : { type: Boolean, default: false},
+    habits: [{
+              title: {type: String, required: true},
+              startDate: {type: Date, required: true},
+              endDate : {type: Date, required: true},
+              isDefault: {type: Boolean, default: false},
+              over: {type: Number},
+              under: {type: Number},
+              notSet: {type: Number},
+              dates: [{
+                      theDate: {type: Date, required: true},
+                      dateState: {type: String, default: 'notSet'}
+                    }]
+            }]
 });
 
 User.pre('save', function(next) {
@@ -38,5 +51,7 @@ User.methods.comparePassword = function(candidatePassword, cb) {
         cb(null, isMatch);
     });
 };
+
+
 
 module.exports = mongoose.model('User', User);

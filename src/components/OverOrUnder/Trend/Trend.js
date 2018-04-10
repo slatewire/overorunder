@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 class Trend extends Component {
   render() {
+
+console.log("days ago 1 ", this.props.daysAgo1);
+console.log("days ago 2 ", this.props.daysAgo2);
+
     return (
       <div className="trend">
         <div className='trendDiv'>

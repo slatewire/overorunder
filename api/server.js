@@ -10,7 +10,11 @@ var mongoose    = require('mongoose');
 var validator   = require("email-validator");
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
-var User   = require('./app/models/user'); // get our mongoose model
+
+// get our mongoose model
+var User   = require('./app/models/user');
+
+
 
 // =======================
 // configuration =========
@@ -26,6 +30,7 @@ app.use(bodyParser.json());
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
+
 
 // =======================
 // routes ================
@@ -91,30 +96,78 @@ apiRoutes.post('/signup', function(req, res) {
         res.json({ success: false, message: 'User already has an account.'});
       } else if (!user) {
 
+        var startDate = new Date();
+        startDate.setDate(startDate.getDate() - 7);
+        var endDate = new Date(2019, 0, 1, 0, 0, 0, 0);
+
+        var theDates = [];
+
+var monthNames = [
+   "January", "February", "March",
+   "April", "May", "June", "July",
+   "August", "September", "October",
+   "November", "December"
+ ];
+
+ var dateStringStart = startDate.getDate() + ' ' + monthNames[startDate.getMonth()] + ' ' + startDate.getFullYear();
+ var dateStringEnd = endDate.getDate() + ' ' + monthNames[endDate.getMonth()] + ' ' + endDate.getFullYear();
+var aDate = new Date();
+
+
+        for (var d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+          var dString = d.getDate() + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear();
+          aDate=d;
+          aDate.setHours(0,0,0,0);
+          var newOverUnderDate = {
+            theDate: new Date(aDate),
+            dateState: 'notSet'
+          };
+          theDates.push(newOverUnderDate);
+        }
+theDates.forEach(function(element){
+  var dString = element.theDate.getDate() + ' ' + monthNames[element.theDate.getMonth()] + ' ' + element.theDate.getFullYear();
+})
+
+        //theDates = theDates.reverse();
+
+        var newHabit = {
+          title: 'drinking',
+          startDate: startDate,
+          endDate: endDate,
+          isDefault: true,
+          over: 0,
+          under: 0,
+          notSet: 7,
+          dates: theDates
+        };
+
+        var habits = [];
+        habits.push(newHabit);
+
         // create a sample user
         var newUser = new User({
           name: req.body.name,
           password: req.body.password,
-          admin: false
+          admin: false,
+          habits: habits
         });
 
         // save the sample user
         newUser.save(function(err) {
           if (err) throw err;
 
-          const payload = {
-            user: newUser.name
-          };
-          var token = jwt.sign(payload, app.get('superSecret'), {
-            expiresIn: 60*60*24 // expires in 24 hours
-          });
-
-          // return the information including token as JSON
-          res.json({
-            success: true,
-            message: 'Enjoy your token!',
-            token: token
-          });
+            const payload = {
+              user: newUser.name
+            };
+            var token = jwt.sign(payload, app.get('superSecret'), {
+              expiresIn: 60*60*24 // expires in 24 hours
+            });
+            var token = token;
+            res.json({
+              success: true,
+              message: 'Enjoy your token!',
+              token: token
+            });
         });
       }
     });
@@ -138,10 +191,6 @@ apiRoutes.post('/authenticate', function(req, res) {
         res.json({ success: false, message: 'Authentication failed. User not found.' });
       } else if (user) {
 
-      // check if password matches
-//      if (user.password != req.body.password) {
-//        res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-//      } else {
         user.comparePassword(req.body.password, function(err, isMatch) {
           if (err) {
             res.json({ success: false, message: 'Error.' });
@@ -150,10 +199,6 @@ apiRoutes.post('/authenticate', function(req, res) {
               res.json({ success: false, message: 'Authentication failed. Wrong password.' });
             } else {
 
-
-          // if user is found and password is right
-          // create a token with only our given payload
-          // we don't want to pass in the entire user since that has the password
             const payload = {
               admin: user.admin,
               user: user.name
@@ -211,7 +256,6 @@ apiRoutes.use(function(req, res, next) {
 // route to show a random message (GET http://localhost:8080/api/)
 apiRoutes.get('/', function(req, res) {
   res.json({ message: 'Welcome to the coolest API on earth!' });
-  console.log(req.decoded.userId);
 });
 
 // route to return all users (GET http://localhost:8080/api/users)
@@ -234,120 +278,100 @@ apiRoutes.get('/users', function(req, res) {
 });
 
 
-
-
-
-
 apiRoutes.get('/userData', function(req, res) {
 
+    User.findOne({
+      name: req.decoded.user
+    }, function(err, user) {
 
-  let d1 = new Date(18, 2, 1, 0, 0, 0, 0);
-  let d2 = new Date(18, 2, 2, 0, 0, 0, 0);
-  let d3 = new Date(18, 2, 3, 0, 0, 0, 0);
-  let d4 = new Date(18, 2, 4, 0, 0, 0, 0);
-  let d5 = new Date(18, 2, 5, 0, 0, 0, 0);
-  let d6 = new Date(18, 2, 6, 0, 0, 0, 0);
-  let d7 = new Date(18, 2, 7, 0, 0, 0, 0);
-  let d8 = new Date(18, 2, 8, 0, 0, 0, 0);
-  let d9 = new Date(18, 2, 9, 0, 0, 0, 0);
-  let d10 = new Date(18, 2, 10, 0, 0, 0, 0);
+      if (err) throw err;
 
+      if (user) {
 
-      const date1 = {
-                    date: d10,
-                    dateState: "good"
-      };
-
-      const date2 = {
-                    date: d9,
-                    dateState: "bad"
-      };
-
-      const date3 = {
-                    date: d8,
-                    dateState: "bad"
-      };
-
-      const date4 = {
-                    date: d7,
-                    dateState: "good"
-      };
-
-      const date5 = {
-                    date: d6,
-                    dateState: "bad"
-      };
-
-      const date6 = {
-                    date: d5,
-                    dateState: "notSet"
-      };
-
-      const date7 = {
-                    date: d4,
-                    dateState: "good"
-      };
-
-      const date8 = {
-                    date: d3,
-                    dateState: "bad"
-      };
-
-      const date9 = {
-                    date: d2,
-                    dateState: "bad"
-      };
-
-      const date10 = {
-                    date: d1,
-                    dateState: "notSet"
-      };
-
-      const fakeDates = [date1, date2, date3, date4, date5, date6, date7, date8, date9, date10];
-
-
-      const fakeHabitData1 = {
-                            name: "exercise",
-                            over: 3,
-                            under: 5,
-                            notSet: 2,
-                            left: 20,
-                            total: 30,
-                            duration: "month",
-                            dates: fakeDates,
-                            default: false
-                            };
-
-      const fakeHabitData2 = {
-                            name: "drinking",
-                            over: 3,
-                            under: 5,
-                            notSet: 2,
-                            left: 20,
-                            total:30,
-                            duration: "month",
-                            dates: fakeDates,
-                            default: true
-                            };
-
-        const fakeHabits = [fakeHabitData1, fakeHabitData2];
-
-
-  res.json({ success: true, message: 'found the user', habits: fakeHabits});
+        res.json({ success: true, message: 'found the user', habits: user.habits});
+      } else {
+        return res.json({ success: false, message: 'Failed to find the user.' });
+      }
+    });
 });
 
 
 apiRoutes.post('/updateDateState', function(req, res) {
 
+  // so make an update to the state, we need
+  // need old state, new state, habit and date.  User comes from the token
+  //use fine one
 
-  res.json({ success: true, message: 'returned from stub'});
+  // i could get the user block
+  // get the right habbit
+  // get the right dates
+  // update the date
+  // -> replace and save the whole user block with the one updated date?
+
+  User.findOne({
+    name: req.decoded.user
+  }, function(err, user) {
+
+    if (err) throw err;//
+
+    if (user) {
+      // now have the users data block - so store a copy
+      var newUser = user;
+      newUser.habits.forEach(function(thisHabit) {
+        if (thisHabit.title === req.body.habit) {
+          // UPDATE according to old state new state etc//
+
+console.log("THE HABITS: ", thisHabit.title, " ", req.body.habit);
+          thisHabit.dates.forEach(function(thisDate, index) {
+            var passedDate = new Date(req.body.date);
+            if (thisDate.theDate === passedDate) {
+                // set flag to do update
+                // DO UPDATE HERE
+                var oldState = thisDate.dateState;
+                thisDate.dateState = req.body.newState;
+                // change the state stuff
+
+                if(req.body.newState === 'good') {
+                  if(oldState === 'notSet') {  // notSet to good
+                    thisHabit.notSet = this.habit.notSet - 1;
+                    thisHabit.over = thisHabit.over + 1;
+                  } else { // it is bad to good
+                    thisHabit.under = thisHabit.under - 1;
+                    thisHabit.over = thisHabit.over + 1;
+                    //newHabits[habitIndex].under = newHabits[habitIndex].under -1;
+                    //newHabits[habitIndex].over = newHabits[habitIndex].over + 1;
+                  }
+                } else {  // it is bad state
+                  if(oldState === 'notSet') { // notSet to Bad
+                    thisHabit.notSet = thisHabit.notSet - 1;
+                    thisHabit.under = thisHabit.under + 1;
+                    //newHabits[habitIndex].notSet = newHabits[habitIndex].notSet - 1;
+                    //newHabits[habitIndex].under = newHabits[habitIndex].under + 1;
+                  } else { // good to bad
+                    thisHabit.over = thisHabit.over - 1;
+                    thisHabit.under = thisHabit.under + 1;
+                    //newHabits[habitIndex].over = newHabits[habitIndex].over - 1;
+                    //newHabits[habitIndex].under = newHabits[habitIndex].under + 1;
+                  }
+                }
+            }
+          })
+        }
+      });
+      // newUser is updated so just replace user with NewUser
+      var query = {name: req.decoded.user};
+      User.findOneAndUpdate(query, newUser, function(err, doc){
+        if (err) return res.json({ success: false, message: 'failed to make the update'});
+
+        res.json({ success: true, message: 'user data updated'});
+      });
+
+    }
+  });
+
+  //res.json({ success: true, message: 'returned from stub'});
 
 });
-
-
-
-
-
 
 
 // apply the routes to our application with the prefix /api

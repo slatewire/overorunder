@@ -14,8 +14,9 @@ class OverOrUnder extends Component {
     this.state = {
       myScreen: 'habitScreen',
       habits: [],
-      currentHabit: '',
-      myToken: ''
+      currentHabit: -1,
+      myToken: '',
+      lastDateIndex: -1
     };
 
     this.handleSignOut = this.handleSignOut.bind(this);
@@ -59,23 +60,22 @@ try {
       // one day record if update and do store/update stuff
 
     if (oldState === newState){
-      // we are doing to do nothing
+      // we are going to do nothing
     } else {
 
       let newHabits = this.state.habits;
       let habitIndex = null;
       let datesIndex = null;
 
-      this.state.habits.forEach(function(element, index){
-        if (element.name === habit) {
-          habitIndex = index;
-          element.dates.forEach(function(theDate, index){
-            if (theDate.date === date) {
-              datesIndex = index;
-            }
-          });
+      habitIndex = this.state.currentHabit;
+      this.state.habits[habitIndex].dates.forEach(function(theDate, index){
+
+        if (theDate.theDate === date) {
+          datesIndex = index;
         }
       });
+
+
 
       // if habit or date index are null we should error.
 
@@ -96,10 +96,12 @@ try {
           newHabits[habitIndex].under = newHabits[habitIndex].under + 1;
         }
       }
+
       newHabits[habitIndex].dates[datesIndex].dateState = newState;
 
 
       this.setState({habits: newHabits});
+      this.setState({lastDateIndex: datesIndex});
     }
   }
 
@@ -160,23 +162,27 @@ try {
       return response.json();
     }).then(jsonResponse => {
 
+
       // TURN THE RESPONSE INTO MY DATA
-      let habitIndex = null;
+      let habitIndex = -1;
       jsonResponse.habits.forEach(function(element, index){
-        if (element.default) {
+        if (element.isDefault) {
           habitIndex = index;
         }
+
+        let reverseDates = element.dates;
+        let datesToSave = reverseDates.reverse();
+
+
       });
 
+      if (habitIndex !== -1) {
 
-      this.setState({habits: jsonResponse.habits});
-      this.setState({currentHabit: jsonResponse.habits[habitIndex].name});
+
+        this.setState({habits: jsonResponse.habits});
+        this.setState({currentHabit: habitIndex});
+      }
     });
-
-// CREATE FAKE DATA RETURNED TO BUILD FRONT trendDiv
-
-
-
   }
 
 
@@ -188,24 +194,18 @@ try {
 
     if (thisScreen === "habitScreen") {
 
-      // if this currentHabit === "" we have no data so show  the load myScreen
-      // when the default updates the state reder will be redrawn
-
       // find the habit
       let currentHabit = this.state.currentHabit;
       let habitObject = null;
 
-      if (currentHabit === '') {
+      if (currentHabit === -1) {
         componentToShow = <p>loading the darn data</p>
+        menuButton = <Button floating  className='teal lighten-2' waves='light' icon='menu' onClick={this.handleMenuButton}/>
       } else {
 
+        habitObject = this.state.habits[currentHabit];
 
-        this.state.habits.forEach(function(thisElement){
-          if (thisElement.name === currentHabit) {
-            habitObject = thisElement;
-          }
-        });
-
+  //console.log("RENDER, Date index and sateState ", this.state.lastDateIndex, " ", habitObject.dates[this.state.lastDateIndex].dateState);
 
         componentToShow = <HabitScreen habitData={habitObject} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
         menuButton = <Button floating  className='teal lighten-2' waves='light' icon='menu' onClick={this.handleMenuButton}/>

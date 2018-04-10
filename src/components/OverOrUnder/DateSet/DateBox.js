@@ -6,7 +6,7 @@ class DateBox extends Component {
     super(props);
 
   this.state = {
-    date: this.props.cardDate.date,
+    date: this.props.cardDate.theDate,
     dateState: this.props.cardDate.dateState
   };
 
@@ -38,6 +38,14 @@ handleHabitDateUpdateBad (habit, date, oldState, newState) {
   render() {
 
   let newDate = new Date(this.state.date);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  if (newDate >= today) {
+    return ( <div></div>);
+  } else {
+
+
 
   const days = ['Sun','Mon','Tues','Wed','Thur','Fri','Sat'];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
@@ -68,6 +76,7 @@ handleHabitDateUpdateBad (habit, date, oldState, newState) {
         </div>
       </div>
     );
+  }
   }
 }
 
