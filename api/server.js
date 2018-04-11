@@ -298,16 +298,6 @@ apiRoutes.get('/userData', function(req, res) {
 
 apiRoutes.post('/updateDateState', function(req, res) {
 
-  // so make an update to the state, we need
-  // need old state, new state, habit and date.  User comes from the token
-  //use fine one
-
-  // i could get the user block
-  // get the right habbit
-  // get the right dates
-  // update the date
-  // -> replace and save the whole user block with the one updated date?
-
   User.findOne({
     name: req.decoded.user
   }, function(err, user) {
@@ -321,56 +311,54 @@ apiRoutes.post('/updateDateState', function(req, res) {
         if (thisHabit.title === req.body.habit) {
           // UPDATE according to old state new state etc//
 
-console.log("THE HABITS: ", thisHabit.title, " ", req.body.habit);
           thisHabit.dates.forEach(function(thisDate, index) {
+
             var passedDate = new Date(req.body.date);
-            if (thisDate.theDate === passedDate) {
-                // set flag to do update
-                // DO UPDATE HERE
+            passedDate.setHours(0,0,0,0);
+
+            checkDate = thisDate.theDate.setHours(0,0,0,0);
+            var previous = new Date (checkDate);
+            var nextD = new Date (checkDate);
+            previous.setDate(previous.getDate()-1);
+            nextD.setDate(nextD.getDate()+1);
+
+            if ((passedDate > previous) && (passedDate < nextD)) {
+
                 var oldState = thisDate.dateState;
                 thisDate.dateState = req.body.newState;
                 // change the state stuff
 
                 if(req.body.newState === 'good') {
                   if(oldState === 'notSet') {  // notSet to good
-                    thisHabit.notSet = this.habit.notSet - 1;
+                    thisHabit.notSet = thisHabit.notSet - 1;
                     thisHabit.over = thisHabit.over + 1;
                   } else { // it is bad to good
                     thisHabit.under = thisHabit.under - 1;
                     thisHabit.over = thisHabit.over + 1;
-                    //newHabits[habitIndex].under = newHabits[habitIndex].under -1;
-                    //newHabits[habitIndex].over = newHabits[habitIndex].over + 1;
                   }
                 } else {  // it is bad state
                   if(oldState === 'notSet') { // notSet to Bad
                     thisHabit.notSet = thisHabit.notSet - 1;
                     thisHabit.under = thisHabit.under + 1;
-                    //newHabits[habitIndex].notSet = newHabits[habitIndex].notSet - 1;
-                    //newHabits[habitIndex].under = newHabits[habitIndex].under + 1;
                   } else { // good to bad
                     thisHabit.over = thisHabit.over - 1;
                     thisHabit.under = thisHabit.under + 1;
-                    //newHabits[habitIndex].over = newHabits[habitIndex].over - 1;
-                    //newHabits[habitIndex].under = newHabits[habitIndex].under + 1;
                   }
                 }
             }
-          })
+          });
         }
       });
-      // newUser is updated so just replace user with NewUser
-      var query = {name: req.decoded.user};
-      User.findOneAndUpdate(query, newUser, function(err, doc){
-        if (err) return res.json({ success: false, message: 'failed to make the update'});
+
+      User.update({name: req.decoded.user},{$set: {habits: newUser.habits}}, function(err, count, status) {
+
+        if (err) throw err;
 
         res.json({ success: true, message: 'user data updated'});
-      });
 
+      });
     }
   });
-
-  //res.json({ success: true, message: 'returned from stub'});
-
 });
 
 

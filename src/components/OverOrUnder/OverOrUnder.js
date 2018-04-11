@@ -27,12 +27,23 @@ class OverOrUnder extends Component {
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
 
+console.log("DATE BEING PASSED: ", date);
+
     // call update on api
 const myToken = localStorage.getItem('overUnderToken');
 
-const authUrl = 'http://localhost:8080/api/updateDateState';
+let url = 'http://localhost:8080/api/updateDateState';
+
+if (process.env.REACT_APP_ENV === 'dev') {
+  url = 'http://localhost:8080/api/updateDateState';
+} else if (process.env.REACT_APP_ENV === 'prod') {
+  url = 'http://api.overorunder.io/api/updateDateState';
+} else {
+  url = 'http://localhost:8080/api/updateDateState';
+}
+
 try {
-  let response = await fetch(authUrl, {
+  let response = await fetch(url, {
     method: 'POST',
     body: JSON.stringify({habit: habit,
                           date: date,
@@ -153,7 +164,17 @@ try {
 
     const myToken = localStorage.getItem('overUnderToken');
 
-    return fetch(`http://localhost:8080/api/userData/`, {
+    let url = 'http://localhost:8080/api/userData/';
+
+    if (process.env.REACT_APP_ENV === 'dev') {
+      url = 'http://localhost:8080/api/userData/';
+    } else if (process.env.REACT_APP_ENV === 'prod') {
+      url = 'http://api.overorunder.io/api/userData';
+    } else {
+      url = 'http://localhost:8080/api/userData/';
+    }
+
+    return fetch(url, {
       headers: {
         "Content-Type": 'application/x-www-form-urlencoded',
         "x-access-token": myToken
@@ -171,7 +192,9 @@ try {
         }
 
         let reverseDates = element.dates;
-        let datesToSave = reverseDates.reverse();
+        //let datesToSave = reverseDates.reverse();
+        reverseDates.reverse();
+
 
 
       });

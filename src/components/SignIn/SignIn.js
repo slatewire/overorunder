@@ -51,9 +51,19 @@ class SignIn extends Component {
       if(myToken) {
 
         // call the API to see if valid
-        const authUrl = 'http://localhost:8080/api/validate';
+
+        let url = 'http://localhost:8080/api/validate';
+
+        if (process.env.REACT_APP_ENV === 'dev') {
+          url = 'http://localhost:8080/api/validate';
+        } else if (process.env.REACT_APP_ENV === 'prod') {
+          url = 'http://api.overorunder.io/api/validate';
+        } else {
+          url = 'http://localhost:8080/api/validate';
+        }
+
         try {
-          let response = await fetch(authUrl, {
+          let response = await fetch(url, {
             method: 'POST',
             body: JSON.stringify({token: myToken}),
             headers: {
@@ -110,9 +120,18 @@ class SignIn extends Component {
 
     this.setState({message: ""});
 
-    const authUrl = 'http://localhost:8080/api/authenticate';
+    let url = 'http://localhost:8080/api/authenticate';
+
+    if (process.env.REACT_APP_ENV === 'dev') {
+      url = 'http://localhost:8080/api/authenticate';
+    } else if (process.env.REACT_APP_ENV === 'prod') {
+      url = 'http://api.overorunder.io/api/authenticate';
+    } else {
+      url = 'http://localhost:8080/api/authenticate';
+    }
+
     try {
-      let response = await fetch(authUrl, {
+      let response = await fetch(url, {
         method: 'POST',
         body: JSON.stringify({name: this.state.email,
                               password: this.state.password}),
@@ -146,9 +165,18 @@ class SignIn extends Component {
 
     this.setState({message: ""});
 
-    const authUrl = 'http://localhost:8080/api/signup';
+    let url = 'http://localhost:8080/api/signup';
+
+    if (process.env.REACT_APP_ENV === 'dev') {
+      url = 'http://localhost:8080/api/signup';
+    } else if (process.env.REACT_APP_ENV === 'prod') {
+      url = 'http://api.overorunder.io/api/signup';
+    } else {
+      url = 'http://localhost:8080/api/signup';
+    }
+
     try {
-      let response = await fetch(authUrl, {
+      let response = await fetch(url, {
         method: 'POST',
         body: JSON.stringify({name: this.state.email,
                               password: this.state.password}),

@@ -38,7 +38,7 @@ class HabitScreen extends Component {
     return (
       <div>
         <XoverY over={this.props.habitData.over} under={this.props.habitData.under} />
-        <Trend daysAgo7={this.props.habitData.dates[trendIndex].dateState} daysAgo6={this.props.habitData.dates[trendIndex-1].dateState} daysAgo5={this.props.habitData.dates[trendIndex-2].dateState} daysAgo4={this.props.habitData.dates[trendIndex-3].dateState} daysAgo3={this.props.habitData.dates[trendIndex-4].dateState} daysAgo2={this.props.habitData.dates[trendIndex-5].dateState} daysAgo1={this.props.habitData.dates[trendIndex-6].dateState} />
+        <Trend daysAgo7={this.props.habitData.dates[trendIndex-1].dateState} daysAgo6={this.props.habitData.dates[trendIndex-2].dateState} daysAgo5={this.props.habitData.dates[trendIndex-3].dateState} daysAgo4={this.props.habitData.dates[trendIndex-4].dateState} daysAgo3={this.props.habitData.dates[trendIndex-5].dateState} daysAgo2={this.props.habitData.dates[trendIndex-6].dateState} daysAgo1={this.props.habitData.dates[trendIndex-7].dateState} />
         <StatsText over={this.props.habitData.over} under={this.props.habitData.under} total={totalDays} notSet={this.props.habitData.notSet}/>
         <DateSet datesData={this.props.habitData.dates} habitName={this.props.habitData.title} handleHabitDateUpdate={this.props.handleHabitDateUpdate}/>
       </div>
