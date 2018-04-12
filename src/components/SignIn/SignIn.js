@@ -52,14 +52,14 @@ class SignIn extends Component {
 
         // call the API to see if valid
 
-        let url = 'https://localhost:8080/api/validate';
+        let url = 'http://localhost:8080/api/validate';
 
         if (process.env.REACT_APP_ENV === 'dev') {
-          url = 'https://localhost:8080/api/validate';
+          url = 'http://localhost:8080/api/validate';
         } else if (process.env.REACT_APP_ENV === 'prod') {
-          url = 'https://api.overorunder.io/api/validate';
+          url = 'http://api.overorunder.io/api/validate';
         } else {
-          url = 'https://localhost:8080/api/validate';
+          url = 'http://localhost:8080/api/validate';
         }
 
         try {
@@ -120,14 +120,14 @@ class SignIn extends Component {
 
     this.setState({message: ""});
 
-    let url = 'https://localhost:8080/api/authenticate';
+    let url = 'http://localhost:8080/api/authenticate';
 
     if (process.env.REACT_APP_ENV === 'dev') {
-      url = 'https://localhost:8080/api/authenticate';
+      url = 'http://localhost:8080/api/authenticate';
     } else if (process.env.REACT_APP_ENV === 'prod') {
-      url = 'https://api.overorunder.io/api/authenticate';
+      url = 'http://api.overorunder.io/api/authenticate';
     } else {
-      url = 'https://localhost:8080/api/authenticate';
+      url = 'http://localhost:8080/api/authenticate';
     }
 
     try {
@@ -165,14 +165,14 @@ class SignIn extends Component {
 
     this.setState({message: ""});
 
-    let url = 'https://localhost:8080/api/signup';
+    let url = 'http://localhost:8080/api/signup';
 
     if (process.env.REACT_APP_ENV === 'dev') {
-      url = 'https://localhost:8080/api/signup';
+      url = 'http://localhost:8080/api/signup';
     } else if (process.env.REACT_APP_ENV === 'prod') {
-      url = 'https://api.overorunder.io/api/signup';
+      url = 'http://api.overorunder.io/api/signup';
     } else {
-      url = 'https://localhost:8080/api/signup';
+      url = 'http://localhost:8080/api/signup';
     }
 
     try {

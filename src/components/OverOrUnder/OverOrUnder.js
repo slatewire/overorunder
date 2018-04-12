@@ -30,14 +30,14 @@ class OverOrUnder extends Component {
     // call update on api
 const myToken = localStorage.getItem('overUnderToken');
 
-let url = 'https://localhost:8080/api/updateDateState';
+let url = 'http://localhost:8080/api/updateDateState';
 
 if (process.env.REACT_APP_ENV === 'dev') {
-  url = 'https://localhost:8080/api/updateDateState';
+  url = 'http://localhost:8080/api/updateDateState';
 } else if (process.env.REACT_APP_ENV === 'prod') {
-  url = 'https://api.overorunder.io/api/updateDateState';
+  url = 'http://api.overorunder.io/api/updateDateState';
 } else {
-  url = 'https://localhost:8080/api/updateDateState';
+  url = 'http://localhost:8080/api/updateDateState';
 }
 
 try {
@@ -162,14 +162,14 @@ try {
 
     const myToken = localStorage.getItem('overUnderToken');
 
-    let url = 'https://localhost:8080/api/userData/';
+    let url = 'http://localhost:8080/api/userData/';
 
     if (process.env.REACT_APP_ENV === 'dev') {
-      url = 'https://localhost:8080/api/userData/';
+      url = 'http://localhost:8080/api/userData/';
     } else if (process.env.REACT_APP_ENV === 'prod') {
-      url = 'https://api.overorunder.io/api/userData';
+      url = 'http://api.overorunder.io/api/userData';
     } else {
-      url = 'https://localhost:8080/api/userData/';
+      url = 'http://localhost:8080/api/userData/';
     }
 
     return fetch(url, {
