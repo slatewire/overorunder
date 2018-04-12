@@ -20,7 +20,7 @@ class Home extends React.Component {
         if (process.env.REACT_APP_ENV === 'dev') {
           url = 'http://localhost:8080/api/validate/';
         } else if (process.env.REACT_APP_ENV === 'prod') {
-          url = 'http://api.overorunder.io/api/validate';
+          url = 'https://api.overorunder.io/api/validate';
         } else {
           url = 'http://localhost:8080/api/validate/';
         }
