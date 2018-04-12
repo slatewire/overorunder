@@ -27,8 +27,6 @@ class OverOrUnder extends Component {
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
 
-console.log("DATE BEING PASSED: ", date);
-
     // call update on api
 const myToken = localStorage.getItem('overUnderToken');
 
@@ -183,7 +181,6 @@ try {
       return response.json();
     }).then(jsonResponse => {
 
-
       // TURN THE RESPONSE INTO MY DATA
       let habitIndex = -1;
       jsonResponse.habits.forEach(function(element, index){
@@ -194,14 +191,9 @@ try {
         let reverseDates = element.dates;
         //let datesToSave = reverseDates.reverse();
         reverseDates.reverse();
-
-
-
       });
 
       if (habitIndex !== -1) {
-
-
         this.setState({habits: jsonResponse.habits});
         this.setState({currentHabit: habitIndex});
       }

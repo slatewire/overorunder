@@ -101,34 +101,26 @@ apiRoutes.post('/signup', function(req, res) {
         var endDate = new Date(2019, 0, 1, 0, 0, 0, 0);
 
         var theDates = [];
-
-var monthNames = [
-   "January", "February", "March",
-   "April", "May", "June", "July",
-   "August", "September", "October",
-   "November", "December"
- ];
-
- var dateStringStart = startDate.getDate() + ' ' + monthNames[startDate.getMonth()] + ' ' + startDate.getFullYear();
- var dateStringEnd = endDate.getDate() + ' ' + monthNames[endDate.getMonth()] + ' ' + endDate.getFullYear();
-var aDate = new Date();
-
+        //var aDate = new Date();
+        var dateString = "";
 
         for (var d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-          var dString = d.getDate() + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear();
-          aDate=d;
-          aDate.setHours(0,0,0,0);
+          //var dString = d.getDate() + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear();
+          //aDate=d;
+          //aDate.setHours(0,0,0,0);
+
+          var year = d.getFullYear();
+          var month = d.getMonth() + 1;
+          var day = d.getDate();
+          dateString = year + "-" + month + "-" + day;
+
           var newOverUnderDate = {
-            theDate: new Date(aDate),
+            //theDate: new Date(aDate),
+            theDate: dateString,
             dateState: 'notSet'
           };
           theDates.push(newOverUnderDate);
         }
-theDates.forEach(function(element){
-  var dString = element.theDate.getDate() + ' ' + monthNames[element.theDate.getMonth()] + ' ' + element.theDate.getFullYear();
-})
-
-        //theDates = theDates.reverse();
 
         var newHabit = {
           title: 'drinking',
@@ -313,16 +305,17 @@ apiRoutes.post('/updateDateState', function(req, res) {
 
           thisHabit.dates.forEach(function(thisDate, index) {
 
-            var passedDate = new Date(req.body.date);
-            passedDate.setHours(0,0,0,0);
+//            var passedDate = new Date(req.body.date);
+//            passedDate.setHours(0,0,0,0);
 
-            checkDate = thisDate.theDate.setHours(0,0,0,0);
-            var previous = new Date (checkDate);
-            var nextD = new Date (checkDate);
-            previous.setDate(previous.getDate()-1);
-            nextD.setDate(nextD.getDate()+1);
+//            checkDate = thisDate.theDate.setHours(0,0,0,0);
+//            var previous = new Date (checkDate);
+//            var nextD = new Date (checkDate);
+//            previous.setDate(previous.getDate()-1);
+//            nextD.setDate(nextD.getDate()+1);
 
-            if ((passedDate > previous) && (passedDate < nextD)) {
+//            if ((passedDate > previous) && (passedDate < nextD)) {
+            if (thisDate.theDate === req.body.date) {
 
                 var oldState = thisDate.dateState;
                 thisDate.dateState = req.body.newState;

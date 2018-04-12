@@ -1,7 +1,6 @@
 // get an instance of mongoose and mongoose.Schema
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Habit = require('./habit');
 var bcrypt = require('bcrypt');
 var SALT_WORK_FACTOR = 10;
 
@@ -18,7 +17,7 @@ var User = new Schema({
               under: {type: Number},
               notSet: {type: Number},
               dates: [{
-                      theDate: {type: Date, required: true},
+                      theDate: {type: String, required: true},
                       dateState: {type: String, default: 'notSet'}
                     }]
             }]

@@ -21,7 +21,6 @@ handleHabitDateUpdateGood (habit, date, oldState, newState) {
   } else {
     this.props.handleHabitDateUpdate(this.props.habitName, this.state.date, this.state.dateState, 'good');
     this.setState({dateState: 'good'});
-    console.log("PASSING THE DATE: ", this.state.date);
   }
 }
 
@@ -31,7 +30,6 @@ handleHabitDateUpdateBad (habit, date, oldState, newState) {
   } else {
     this.props.handleHabitDateUpdate(this.props.habitName, this.state.date, this.state.dateState, 'bad');
     this.setState({dateState: 'bad'});
-    console.log("PASSING THE DATE: ", this.state.date);
   }
 }
 
@@ -40,15 +38,12 @@ handleHabitDateUpdateBad (habit, date, oldState, newState) {
   render() {
 
   let newDate = new Date(this.state.date);
-  console.log("STATE DATE and NEW DATE: ", this.state.date, " ", newDate);
   const today = new Date();
   today.setHours(0,0,0,0);
 
   if (newDate >= today) {
     return ( <div></div>);
   } else {
-
-console.log("Date for card", newDate, " ", this.state.date);
 
   const days = ['Sun','Mon','Tues','Wed','Thur','Fri','Sat'];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];

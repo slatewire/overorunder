@@ -4,7 +4,7 @@ class StatsText extends Component {
   render() {
 
     const daysToGo = this.props.total - (this.props.notSet + this.props.over + this.props.under);
-    const toWin = Math.round((((this.props.total - this.props.notSet)/ 2) - this.props.over) + 0.5);
+    const toWin = Math.round((((this.props.total - this.props.notSet)/ 2) + 0.5) - this.props.over);
 
     let currentpc = 0
     if ((this.props.over === 0) && (this.props.under === 0)) {
