@@ -230,7 +230,8 @@ let tandc = null;
 if (flow === "login") {
   navButton = <GoToButton onClick={this.goToSignUp} label="Sign Up" />
   actionButton = <ActionButton onClick={this.login} label="Login" />
-  resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
+  //resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
+  resetReqButton = "";
   emailFormDiv = <EmailForm handleUserName={this.handleUserName}/>
   passwordFormDiv = <PasswordForm handlePassword={this.handlePassword}/>
 
@@ -239,7 +240,8 @@ if (flow === "login") {
   actionButton = <ActionButton onClick={this.signUp} label="Sign up" />
   emailFormDiv = <EmailForm handleUserName={this.handleUserName}/>
   passwordFormDiv = <PasswordForm handlePassword={this.handlePassword}/>
-  resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
+  //resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
+  resetReqButton = "";
   tandc = <p> <a className="teal-text text-lighten-2" href="/terms">by signing up you are agreeing to the terms and conditions and the cookie usage policy of UnderOver.</a></p>
 
 } else if (flow === "requestReset") {
