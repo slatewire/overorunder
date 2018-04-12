@@ -15,10 +15,19 @@ class Home extends React.Component {
       let myToken = localStorage.getItem('overUnderToken');
       if(myToken) {
 
+        let url = 'http://localhost:8080/api/validate/';
+
+        if (process.env.REACT_APP_ENV === 'dev') {
+          url = 'http://localhost:8080/api/validate/';
+        } else if (process.env.REACT_APP_ENV === 'prod') {
+          url = 'http://api.overorunder.io/api/validate';
+        } else {
+          url = 'http://localhost:8080/api/validate/';
+        }
+
         // call the API to see if valid
-        const authUrl = 'http://localhost:8080/api/validate';
         try {
-          let response = await fetch(authUrl, {
+          let response = await fetch(url, {
             method: 'POST',
             body: JSON.stringify({token: myToken}),
             headers: {

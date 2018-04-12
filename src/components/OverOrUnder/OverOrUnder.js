@@ -214,7 +214,7 @@ try {
       let habitObject = null;
 
       if (currentHabit === -1) {
-        componentToShow = <p>loading the darn data</p>
+        componentToShow = <p>sorry for the delay, we are just loading up your data</p>
         menuButton = <Button floating  className='teal lighten-2' waves='light' icon='menu' onClick={this.handleMenuButton}/>
       } else {
 
