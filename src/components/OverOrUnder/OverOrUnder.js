@@ -35,7 +35,7 @@ let url = 'http://localhost:8080/api/updateDateState';
 if (process.env.REACT_APP_ENV === 'dev') {
   url = 'http://localhost:8080/api/updateDateState';
 } else if (process.env.REACT_APP_ENV === 'prod') {
-  url = 'http://api.overorunder.io/api/updateDateState';
+  url = 'https://api.overorunder.io/api/updateDateState';
 } else {
   url = 'http://localhost:8080/api/updateDateState';
 }
@@ -167,7 +167,7 @@ try {
     if (process.env.REACT_APP_ENV === 'dev') {
       url = 'http://localhost:8080/api/userData/';
     } else if (process.env.REACT_APP_ENV === 'prod') {
-      url = 'http://api.overorunder.io/api/userData';
+      url = 'https://api.overorunder.io/api/userData';
     } else {
       url = 'http://localhost:8080/api/userData/';
     }

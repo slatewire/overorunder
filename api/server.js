@@ -14,6 +14,21 @@ var config = require('./config'); // get our config file
 // get our mongoose model
 var User   = require('./app/models/user');
 
+require('dotenv').load();
+var https = require('https');
+var http = require('http');
+var fs = require('fs');
+
+// This line is from the Node.js HTTPS documentation.
+if (process.env.ENVIRONMENT === 'production') {
+
+  var options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/overorunder.io/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/overorunder.io/cert.pem')
+  };
+}
+
+
 
 
 // =======================
@@ -363,5 +378,12 @@ app.use('/api', apiRoutes);
 // =======================
 // start the server ======
 // =======================
-app.listen(port);
+// Create an HTTP service.
+http.createServer(app).listen(port);
+
+if (process.env.ENVIRONMENT === 'production') {
+  // Create an HTTPS service identical to the HTTP service.
+  https.createServer(options, app).listen(443);
+}
+//app.listen(port);
 console.log('Magic happens at http://localhost:' + port);

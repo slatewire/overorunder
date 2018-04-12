@@ -57,7 +57,7 @@ class SignIn extends Component {
         if (process.env.REACT_APP_ENV === 'dev') {
           url = 'http://localhost:8080/api/validate';
         } else if (process.env.REACT_APP_ENV === 'prod') {
-          url = 'http://api.overorunder.io/api/validate';
+          url = 'https://api.overorunder.io/api/validate';
         } else {
           url = 'http://localhost:8080/api/validate';
         }
@@ -125,7 +125,7 @@ class SignIn extends Component {
     if (process.env.REACT_APP_ENV === 'dev') {
       url = 'http://localhost:8080/api/authenticate';
     } else if (process.env.REACT_APP_ENV === 'prod') {
-      url = 'http://api.overorunder.io/api/authenticate';
+      url = 'https://api.overorunder.io/api/authenticate';
     } else {
       url = 'http://localhost:8080/api/authenticate';
     }
@@ -170,7 +170,7 @@ class SignIn extends Component {
     if (process.env.REACT_APP_ENV === 'dev') {
       url = 'http://localhost:8080/api/signup';
     } else if (process.env.REACT_APP_ENV === 'prod') {
-      url = 'http://api.overorunder.io/api/signup';
+      url = 'https://api.overorunder.io/api/signup';
     } else {
       url = 'http://localhost:8080/api/signup';
     }
