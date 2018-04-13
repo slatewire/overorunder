@@ -3,6 +3,7 @@ import XoverY from './XoverY/XoverY';
 import Trend from './Trend/Trend';
 import StatsText from './StatsText/StatsText';
 import DateSet from './DateSet/DateSet';
+import moment from 'moment'
 import '../App/App.css';
 
 // array of ProfileActivity
@@ -17,16 +18,30 @@ class HabitScreen extends Component {
     // have to work out array indexs for the 7 dates
     this.props.habitData.dates.forEach(function(element, index){
 
-      var d = new Date();
-      var year = d.getFullYear();
-      var month = d.getMonth() + 1;
-      var day = d.getDate();
-      var dateString = year + "-" + month + "-" + day;
+  //    var d = new Date();
+  //    var year = d.getFullYear();
+  //    var month = d.getMonth() + 1;
+  //    var day = d.getDate();
+  //    var dateString = year + "-" + month + "-" + day;
 
-      if (dateString === element.theDate) {
+      let date = element.theDate;
+      let now = moment();
+      let nowString = now.format('YYYY-MM-DD');
+      console.log("DATE STRING ", nowString);
 
-          trendIndex = index;
+
+      let noIndex = true;
+
+      if (date === nowString) {
+        noIndex = false;
+        trendIndex = index;
+        //console.log("IS THE SAME ", index);
       }
+
+      //if (dateString === element.theDate) {
+
+        //  trendIndex = index;
+      //}
 
     });
 

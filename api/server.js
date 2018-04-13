@@ -119,10 +119,13 @@ apiRoutes.post('/signup', function(req, res) {
           //aDate=d;
           //aDate.setHours(0,0,0,0);
 
+          const dayOrMonth = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
+
+
           var year = d.getFullYear();
-          var month = d.getMonth() + 1;
-          var day = d.getDate();
-          dateString = year + "-" + month + "-" + day;
+          var month = d.getMonth();
+          var day = d.getDate() -1;
+          dateString = year + "-" + dayOrMonth[month] + "-" + dayOrMonth[day];
 
           var newOverUnderDate = {
             //theDate: new Date(aDate),

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Icon } from 'react-materialize'
+//import Moment from 'react-moment';
+import moment from 'moment'
 
 class DateBox extends Component {
   constructor(props) {
@@ -33,48 +35,41 @@ handleHabitDateUpdateBad (habit, date, oldState, newState) {
   }
 }
 
-
-
   render() {
 
-  let newDate = new Date(this.state.date);
-  const today = new Date();
-  today.setHours(0,0,0,0);
+    var date = this.state.date + "T00:00-0000";
+    var now = moment().subtract(1, 'days');
 
-  if (newDate >= today) {
-    return ( <div></div>);
-  } else {
+    if (now.isBefore(date)) {
+      return ( <div></div>);
+    } else {
 
-  const days = ['Sun','Mon','Tues','Wed','Thur','Fri','Sat'];
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
+      let dateString = moment(this.state.date).format('dddd');
+      dateString = dateString.substring(0, 3);
+      let dateStringB = moment(this.state.date).format('MMM Do');
+      dateString = dateString + " " + dateStringB;
 
-  const dayOfWeek = days[ newDate.getDay() ];
-  const month = months[ newDate.getMonth() ];
-  const day = newDate.getDate();
+      let pTag = null;
+      if (this.state.dateState === 'bad') {
+        pTag = <p className="deep-orange-text text-accent-3">{dateString}</p>
+      } else if (this.state.dateState === 'good') {
+        pTag = <p className="teal-text text-lighten-2">{dateString}</p>
+      } else {
+        pTag = <p>{dateString}</p>
+      }
 
-  const theDate = dayOfWeek + " " + day.toString() + " " + month;
-
-  let pTag = null;
-  if (this.state.dateState === 'bad') {
-    pTag = <p className="deep-orange-text text-accent-3">{theDate}</p>
-  } else if (this.state.dateState === 'good') {
-    pTag = <p className="teal-text text-lighten-2">{theDate}</p>
-  } else {
-    pTag = <p>{theDate}</p>
-  }
-
-    return (
-      <div className="card dateCard">
-        <div className="card-content">
-          {pTag}
-            <div className="trendDiv">
-              <Button className="dateButton teal lighten-2" waves='green' node='a' onClick={this.handleHabitDateUpdateGood}><Icon>check</Icon></Button>
-              <Button className="dateButton deep-orange accent-3" waves='green' node='a' onClick={this.handleHabitDateUpdateBad}><Icon>clear</Icon></Button>
+      return (
+        <div className="card dateCard">
+          <div className="card-content">
+            {pTag}
+              <div className="trendDiv">
+                <Button className="dateButton teal lighten-2" waves='green' node='a' onClick={this.handleHabitDateUpdateGood}><Icon>check</Icon></Button>
+                <Button className="dateButton deep-orange accent-3" waves='green' node='a' onClick={this.handleHabitDateUpdateBad}><Icon>clear</Icon></Button>
+              </div>
             </div>
-        </div>
-      </div>
-    );
-  }
+          </div>
+      );
+    }
   }
 }
 
