@@ -16,6 +16,8 @@ var User = new Schema({
               over: {type: Number},
               under: {type: Number},
               notSet: {type: Number},
+              oldOver: {type: Number},
+              oldUnder: {type: Number},
               dates: [{
                       theDate: {type: String, required: true},
                       dateState: {type: String, default: 'notSet'}

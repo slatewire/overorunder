@@ -10,6 +10,7 @@ var mongoose    = require('mongoose');
 var validator   = require("email-validator");
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
+var argv = require( 'argv' );
 
 // get our mongoose model
 var User   = require('./app/models/user');
@@ -40,6 +41,91 @@ app.use(bodyParser.json());
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
+
+////////////////////////////////////
+// Admin Function first
+
+var args = argv.option([
+    {
+      name: 'doOldDates',
+      short: 'y',
+      type: 'boolean'
+    },
+    {
+        name: 'user',
+        short: 'n',
+        type: 'string'
+    },
+    {
+        name: 'over',
+        short: 'o',
+        type: 'int'
+    },
+    {
+        name: 'under',
+        short: 'u',
+        type: 'int'
+    },
+    {
+        name: 'dates',
+        short: 'd',
+        type: 'boolean'
+    },
+    {
+        name: 'habit',
+        short: 'h',
+        type: 'string'
+    }
+]).run()
+
+console.log("the args: ", args);
+//console.log("try to unwrap ", args.options.user);
+
+if (args.options.doOldDates) {
+
+  User.findOne({
+    name: args.options.user
+  }, function(err, user) {
+
+    if (err) throw err;
+
+    if (!user) {
+      console.log("No user");
+      return;
+    } else if (user) {
+
+
+      console.log("hellllllo");
+      //return;
+      // now have the users data block - so store a copy
+      var newUser = user;
+      newUser.habits.forEach(function(thisHabit) {
+        if (thisHabit.title === args.options.habit) {
+          // UPDATE according to old state new state etc//
+console.log("Found habit to update");
+          thisHabit["oldOver"] = args.options.over;
+          thisHabit["oldUnder"] = args.options.under;
+console.log("old over: ", args.options.over);
+console.log("THIS HABIT ", thisHabit);
+        }
+      });
+
+console.log("New Data", newUser.habits);
+
+      User.update({name: args.options.user},{$set: {habits: newUser.habits}}, function(err, count, status) {
+
+        if (err) throw err;
+
+        console.log("old over under score set");
+
+      });
+    }
+  });
+}
+
+
+
+
 
 
 // =======================
@@ -143,6 +229,8 @@ apiRoutes.post('/signup', function(req, res) {
           over: 0,
           under: 0,
           notSet: 7,
+          oldOver: 0,
+          oldUnder: 0,
           dates: theDates
         };
 
