@@ -20,10 +20,12 @@ class StatsText extends Component {
 
     return (
       <div>
-        <p>{daysToGo} days to go with {toWin} good days needed to win. Currently you are on {currentpc}% of good days, you need {futurepc}% of days remaining to be good.</p>
+        <p>{toWin} out of the {daysToGo} days left to win. Good days {currentpc}% you need {futurepc}% of the remaining days.</p>
       </div>
     );
   }
 }
 
 export default StatsText;
+
+// <p>{daysToGo} days to go with {toWin} good days needed to win. Currently you are on {currentpc}% of good days, you need {futurepc}% of days remaining to be good.</p>
