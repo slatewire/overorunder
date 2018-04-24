@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { Button } from 'react-materialize'
-import  HabitScreen from './HabitScreen'
-import Dashboard from '../Dashboard/Dashboard'
+import { Button } from 'react-materialize';
+import  HabitScreen from './HabitScreen';
+import Dashboard from '../Dashboard/Dashboard';
+import SetToday from './SetToday/SetToday';
+import DateSet from './DateSet/DateSet';
+import moment from 'moment';
 import '../App/App.css';
 
 // array of ProfileActivity
@@ -23,6 +26,7 @@ class OverOrUnder extends Component {
     this.handleGetData = this.handleGetData.bind(this);
     this.handleMenuButton = this.handleMenuButton.bind(this);
     this.handleHabitDateUpdate = this.handleHabitDateUpdate.bind(this);
+    this.handleDatesButton = this.handleDatesButton.bind(this);
   }
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
@@ -146,7 +150,7 @@ try {
 
     if (currentState === 'habitScreen') {
       newState =  "dashboardScreen";
-    } else if (currentState === 'dashboardScreen') {
+    } else if ((currentState === 'dashboardScreen') || (currentState === "datesScreen")) {
       newState = "habitScreen";
     } else if (currentState === 'habitDetails') {
       newState = "dashboardScreen";
@@ -156,6 +160,10 @@ try {
 
     this.setState({myScreen: newState});
 
+  }
+
+  handleDatesButton () {
+    this.setState({myScreen: "datesScreen"});
   }
 
   handleGetData () {
@@ -207,8 +215,7 @@ try {
     let componentToShow = null;
     let menuButton = null;
 
-    if (thisScreen === "habitScreen") {
-
+    if (thisScreen === "habitScreen" || thisScreen === "datesScreen") {
       // find the habit
       let currentHabit = this.state.currentHabit;
       let habitObject = null;
@@ -222,24 +229,106 @@ try {
 
   //console.log("RENDER, Date index and sateState ", this.state.lastDateIndex, " ", habitObject.dates[this.state.lastDateIndex].dateState);
 
-        componentToShow = <HabitScreen habitData={habitObject} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
-        menuButton = <Button floating  className='teal lighten-2' waves='light' icon='menu' onClick={this.handleMenuButton}/>
+        ////////////////////////////////////////////////////
+        let setToday = false;
+        let todayIndex = 0;
+        habitObject.dates.forEach(function(element, index){
 
+          let date = element.theDate;
+          let now = moment().subtract(1, 'days');
+          let nowString = now.format('YYYY-MM-DD');
+
+          if (date === nowString) {
+            todayIndex = index;
+          }
+        });
+
+        if (habitObject.dates[todayIndex].dateState === "notSet") {
+          setToday = true;
+        }
+
+        let monthOver = 0;
+        let monthUnder = 0;
+
+        const startDate = todayIndex + 30;
+
+        habitObject.dates.forEach(function(element, index){
+
+          if ((index >= todayIndex) && (index < startDate)) {
+            if (element.dateState === "good") {
+              monthOver = monthOver + 1;
+            } else if (element.dateState === "bad") {
+              monthUnder = monthUnder + 1;
+            }
+          }
+        });
+
+        let monthPc = 0;
+        if (monthOver !== 0) {
+          const monthOnePc = (monthOver + monthUnder) / 100;
+          monthPc = Math.round((monthOver / monthOnePc));
+        }
+
+        /////////////////////////////////////////////////////
+
+        if (setToday) {
+            // new screen for seting today
+          return (
+            <div>
+              <SetToday cardDate={habitObject.dates[todayIndex]} habitName ={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
+            </div>
+          );
+            //cardDate={thisDate} habitName ={this.props.habitName}
+
+        } else if (thisScreen === "datesScreen") {
+          return (
+            <div>
+              <DateSet datesData={habitObject.dates} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
+              <div className="bottomDiv">
+                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+              </div>
+            </div>
+          );
+        } else {
+
+          return (
+            <div>
+              <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
+              <div className="bottomDiv">
+                <Button floating fab='horizontal' className='teal lighten-2' waves='light' icon='menu' >
+                  <Button floating icon='date_range' waves='light' className='grey' onClick={this.handleDatesButton} />
+                  <Button floating icon='menu' waves='light' className='grey' onClick={this.handleMenuButton}/>
+                </Button>
+              </div>
+            </div>
+          );
+
+
+          //componentToShow = <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
+          // menuButton = <Button floating  className='teal lighten-2' waves='light' icon='menu' onClick={this.handleMenuButton}/>
+
+        }
       }
     } else if (thisScreen === "dashboardScreen") {
-      componentToShow = <Dashboard handleSignOut={this.handleSignOut}/>
-      menuButton = <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton}/>
+
+      return (
+        <div>
+          <Dashboard handleSignOut={this.handleSignOut}/>
+          <div className="bottomDiv">
+            <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+          </div>
+        </div>
+      );
     }
 
     return (
       <div>
         {componentToShow}
-        <div className="bottomDiv">
-          {menuButton}
-        </div>
+        {menuButton}
       </div>
     );
   }
 }
 
 export default OverOrUnder;
+// style={{bottom: '45px', right: '24px'}}

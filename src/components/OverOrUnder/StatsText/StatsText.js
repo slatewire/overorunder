@@ -16,11 +16,11 @@ class StatsText extends Component {
           currentpc = 0;
         }
     }
-    const futurepc = Math.round(toWin / (daysToGo/100));
+    //const futurepc = Math.round(toWin / (daysToGo/100));
 
     return (
       <div>
-        <p>{toWin} out of the {daysToGo} days left to win. Good days {currentpc}% you need {futurepc}% of the remaining days.</p>
+        <p>{toWin} out of the {daysToGo} days left needed to win.</p>
       </div>
     );
   }
