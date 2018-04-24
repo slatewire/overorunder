@@ -253,7 +253,7 @@ apiRoutes.post('/signup', function(req, res) {
               user: newUser.name
             };
             var token = jwt.sign(payload, app.get('superSecret'), {
-              expiresIn: 60*60*24 // expires in 24 hours
+              expiresIn: 60*60*24*365 // expires in 24 hours
             });
             var token = token;
             res.json({
