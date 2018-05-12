@@ -4,6 +4,8 @@ import  HabitScreen from './HabitScreen';
 import Dashboard from '../Dashboard/Dashboard';
 import SetToday from './SetToday/SetToday';
 import DateSet from './DateSet/DateSet';
+import XoverY from './XoverY/XoverY';
+import TrendPage from './TrendPage/TrendPage';
 import moment from 'moment';
 import '../App/App.css';
 
@@ -27,47 +29,48 @@ class OverOrUnder extends Component {
     this.handleMenuButton = this.handleMenuButton.bind(this);
     this.handleHabitDateUpdate = this.handleHabitDateUpdate.bind(this);
     this.handleDatesButton = this.handleDatesButton.bind(this);
+    this.handleTrendScreenButton = this.handleTrendScreenButton.bind(this);
   }
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
 
     // call update on api
-const myToken = localStorage.getItem('overUnderToken');
+    const myToken = localStorage.getItem('overUnderToken');
 
-let url = 'http://localhost:8080/api/updateDateState';
+    let url = 'http://localhost:8080/api/updateDateState';
 
-if (process.env.REACT_APP_ENV === 'dev') {
-  url = 'http://localhost:8080/api/updateDateState';
-} else if (process.env.REACT_APP_ENV === 'prod') {
-  url = 'https://api.overorunder.io/api/updateDateState';
-} else {
-  url = 'http://localhost:8080/api/updateDateState';
-}
+    if (process.env.REACT_APP_ENV === 'dev') {
+      url = 'http://localhost:8080/api/updateDateState';
+    } else if (process.env.REACT_APP_ENV === 'prod') {
+      url = 'https://api.overorunder.io/api/updateDateState';
+    } else {
+      url = 'http://localhost:8080/api/updateDateState';
+    }
 
-try {
-  let response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify({habit: habit,
+    try {
+      let response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({habit: habit,
                           date: date,
                           newState: newState}),
-    headers: {
-      "Content-type": "application/json",
-      "crossDomain": true,
-      "x-access-token": myToken
-    }
-  });
-  if (response.ok) {
-    let jsonResponse = await response.json();
+        headers: {
+          "Content-type": "application/json",
+          "crossDomain": true,
+          "x-access-token": myToken
+        }
+      });
+      if (response.ok) {
+        let jsonResponse = await response.json();
 
-    if(jsonResponse.success) {
+        if(jsonResponse.success) {
 
-      // TO DO NOT ALOT APART FROM ERROR AND QUEUEING IF NOT NETWORK
+          // TO DO NOT ALOT APART FROM ERROR AND QUEUEING IF NOT NETWORK
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      this.setState({message: "Error from OverOrUnder"});
     }
-  }
-} catch (error) {
-  console.log(error);
-  this.setState({message: "Error from OverOrUnder"});
-}
 
 
       // one day record if update and do store/update stuff
@@ -116,9 +119,11 @@ try {
       this.setState({habits: newHabits});
       this.setState({lastDateIndex: datesIndex});
     }
+
+    this.forceUpdate();
   }
 
-  componentWillMount() {
+componentWillMount() {
     let isAuthed = sessionStorage.getItem('isAuthed');
     if(!isAuthed) {
       const { history } = this.props
@@ -150,7 +155,7 @@ try {
 
     if (currentState === 'habitScreen') {
       newState =  "dashboardScreen";
-    } else if ((currentState === 'dashboardScreen') || (currentState === "datesScreen")) {
+    } else if ((currentState === 'dashboardScreen') || (currentState === "datesScreen") || (currentState === "trendScreen")) {
       newState = "habitScreen";
     } else if (currentState === 'habitDetails') {
       newState = "dashboardScreen";
@@ -160,6 +165,10 @@ try {
 
     this.setState({myScreen: newState});
 
+  }
+
+  handleTrendScreenButton () {
+    this.setState({myScreen: "trendScreen"});
   }
 
   handleDatesButton () {
@@ -191,19 +200,26 @@ try {
 
       // TURN THE RESPONSE INTO MY DATA
       let habitIndex = -1;
-      jsonResponse.habits.forEach(function(element, index){
-        if (element.isDefault) {
-          habitIndex = index;
+
+      if(jsonResponse.habits !== null) {
+
+        jsonResponse.habits.forEach(function(element, index){
+          if (element.isDefault) {
+            habitIndex = index;
+          }
+
+          let reverseDates = element.dates;
+          //let datesToSave = reverseDates.reverse();
+          reverseDates.reverse();
+        });
+
+        if (habitIndex !== -1) {
+          this.setState({habits: jsonResponse.habits});
+          this.setState({currentHabit: habitIndex});
         }
-
-        let reverseDates = element.dates;
-        //let datesToSave = reverseDates.reverse();
-        reverseDates.reverse();
-      });
-
-      if (habitIndex !== -1) {
-        this.setState({habits: jsonResponse.habits});
-        this.setState({currentHabit: habitIndex});
+      } else {
+        // somethig went wrong - do sign out till we fix interval
+        this.handleSignOut();
       }
     });
   }
@@ -215,7 +231,7 @@ try {
     let componentToShow = null;
     let menuButton = null;
 
-    if (thisScreen === "habitScreen" || thisScreen === "datesScreen") {
+    if (thisScreen === "habitScreen" || thisScreen === "datesScreen" || thisScreen === "trendScreen") {
       // find the habit
       let currentHabit = this.state.currentHabit;
       let habitObject = null;
@@ -275,6 +291,7 @@ try {
             // new screen for seting today
           return (
             <div>
+              <XoverY over={habitObject.over} under={habitObject.under} oldOver={habitObject.oldOver} oldUnder={habitObject.oldUnder} />
               <SetToday cardDate={habitObject.dates[todayIndex]} habitName ={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
             </div>
           );
@@ -289,11 +306,21 @@ try {
               </div>
             </div>
           );
+        } else if (thisScreen === "trendScreen") {
+
+          return (
+            <div>
+              <TrendPage habitData={habitObject} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
+              <div className="bottomDiv">
+                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+              </div>
+            </div>
+          );
         } else {
 
           return (
             <div>
-              <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
+              <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton}/>
               <div className="bottomDiv">
                 <Button floating fab='horizontal' className='teal lighten-2' waves='light' icon='menu' >
                   <Button floating icon='date_range' waves='light' className='grey' onClick={this.handleDatesButton} />

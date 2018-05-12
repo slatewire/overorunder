@@ -229,14 +229,55 @@ hr {
       display: in-line;
 }
 
+.badButton {
+
+    background-color: #ff3d00;
+    border: none;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px 2px;
+    border-radius: 50%;
+
+}
+
+.goodButton {
+
+    background-color: #4db6ac;
+    border: none;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    border-radius: 50%;
+
+}
+
 .good {
-      width: 10px;
-      height: 10px;
-      -webkit-border-radius: 5px;
-      -moz-border-radius: 5px;
-      border-radius: 5px;
-      background: #4db6ac;
-      display: in-line;
+  width: 10px;
+  height: 10px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background: #4db6ac;
+  display: in-line;
+}
+
+.notSetButton {
+
+    background-color: #A0A8A0;
+    border: none;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    border-radius: 50%;
 }
 
 .notSet {
@@ -249,17 +290,44 @@ hr {
       display: in-line;
 }
 
+.blank {
+      width: 10px;
+      height: 10px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      background: #FFF8F0;
+      display: in-line;
+}
+
+.blankButton {
+
+    background-color: #FFF8F0;
+    border: none;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    border-radius: 50%;
+}
+
+td {
+  padding: 10, 5;
+}
+
 .dateCard {
   background-color: #FFF8F0;
 }
 
 .todayCard {
   background-color: #FFF8F0;
-  # margin-top: 175px; /* minus half the height */
+  # margin-top: 35px; /* minus half the height */
 }
 
 .spacer {
-  height: 175px;
+  height: 30px;
 }
 
 .percent {
@@ -269,4 +337,12 @@ hr {
 .percentText {
   margin-top: 0px;
   margin-bottom: 5px;
+}
+
+.modal-content {
+  background-color: #FFF8F0;
+}
+
+.modal-footer {
+  background-color: #FFF8F0 !important;
 }
