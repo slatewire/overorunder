@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Modal, Button, Icon } from 'react-materialize'
+import { Modal, Button, Icon, Badge, Chip } from 'react-materialize';
+import moment from 'moment';
 import '../../App/App.css';
 
 class Dot extends Component {
@@ -40,16 +41,25 @@ class Dot extends Component {
 
   render() {
 
+    let dateString = moment(this.state.date).format('dddd');
+    dateString = dateString.substring(0, 3);
+    let dateStringB = moment(this.state.date).format('MMM Do');
+    dateString = dateString + " " + dateStringB;
+
     let dotType = "blank";
+    let sig = "";
     switch (this.state.dot) {
       case "o":
         dotType = "goodButton";
+        sig="sigGood";
         break;
       case "u":
         dotType = "badButton";
+        sig="sigBad";
         break;
       case "n":
         dotType = "notSetButton";
+        sig="sigNotSet";
         break;
       default:
         dotType = "blankButton";
@@ -65,9 +75,10 @@ class Dot extends Component {
 
       return (
           <td>
-            <Modal className="questionModal" bottomSheet
+            <Modal bottomSheet
               trigger={<button className={dotType}></button>}>
-              <p>text in modal</p>
+              <div className={sig}></div>
+              <p>{dateString}</p>
               <div className="trendDiv">
                 <Button className="dateButton teal lighten-2" waves='green' node='a' onClick={this.handleHabitDateUpdateGood}><Icon>check</Icon></Button>
                 <Button className="dateButton deep-orange accent-3" waves='green' node='a' onClick={this.handleHabitDateUpdateBad}><Icon>clear</Icon></Button>

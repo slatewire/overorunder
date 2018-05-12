@@ -134,7 +134,8 @@ class TrendPage extends Component {
 
       if (date2 === nowString2) {
       // last element  in array
-        for (let i = 0; i < addToLastMonth; i++) {
+        thisWeek.pop();
+        for (let i = 0; i <= addToLastMonth; i++) {
           thisWeek.push({dot: "b", date: element});
         }
 

@@ -229,6 +229,15 @@ hr {
       display: in-line;
 }
 
+.sigBad {
+      width: 10px;
+      height: 10px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      background: #ff3d00;
+}
+
 .badButton {
 
     background-color: #ff3d00;
@@ -267,6 +276,15 @@ hr {
   display: in-line;
 }
 
+.sigGood {
+  width: 10px;
+  height: 10px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background: #4db6ac;
+}
+
 .notSetButton {
 
     background-color: #A0A8A0;
@@ -288,6 +306,15 @@ hr {
       border-radius: 5px;
       background: #A0A8A0;
       display: in-line;
+}
+
+.sigNotSet {
+      width: 10px;
+      height: 10px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      background: #A0A8A0;
 }
 
 .blank {

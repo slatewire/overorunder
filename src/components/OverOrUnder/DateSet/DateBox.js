@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Icon } from 'react-materialize'
+import { Button, Icon } from 'react-materialize';
 //import Moment from 'react-moment';
-import moment from 'moment'
+import moment from 'moment';
 
 class DateBox extends Component {
   constructor(props) {
