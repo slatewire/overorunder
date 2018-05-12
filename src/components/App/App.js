@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from  'react-router-dom'
 import './App.css';
-import Home from '../Home/Home'
+//import Home from '../Home/Home'
 import SignIn from '../SignIn/SignIn'
 import OverOrUnder from '../OverOrUnder/OverOrUnder'
 import Terms from '../Terms/Terms'
@@ -14,7 +14,7 @@ class App extends Component {
     return (
       <div>
         <Switch>
-          <Route exact path='/' component={Home}/>
+          <Route exact path='/' component={SignIn}/>
           <Route exact path='/signin/' component={SignIn}/>
           <Route exact path='/terms/' component={Terms}/>
           <Route exact path='/reset/' component={Reset}/>

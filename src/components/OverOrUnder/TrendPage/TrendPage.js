@@ -24,9 +24,11 @@ class TrendPage extends Component {
 
     let trendArray = this.props.habitData.dates.slice(trendIndex, (this.props.habitData.dates.length - 1));
     let thisWeek = [{dot: String, date: {}}];
-    let thisMonth = [{monthName: String, weeks: [thisWeek]}]
+    let thisMonth = [{monthName: String, over: 0, under: 0, percent: 0, weeks: [thisWeek]}]
     let fullTrend = [thisMonth];
     let lastMonth = null;
+    let overCount = 0;
+    let underCount = 0;
 
     trendArray = trendArray.reverse();
 
@@ -93,11 +95,17 @@ class TrendPage extends Component {
         }
 
         thisMonth.weeks.push(thisWeek);
+        thisMonth.over = overCount;
+        thisMonth.under = underCount;
+        thisMonth.percent = Math.round((overCount/((overCount + underCount)/100)));
         fullTrend.push(thisMonth);
+
 
         // Start new month
         lastMonth = month;
-        thisMonth = {monthName: month, weeks: []};
+        thisMonth = {monthName: month, over: 0, under: 0, percent: 0, weeks: []};
+        overCount = 0;
+        underCount = 0;
 
         thisWeek = [];
         for(let x = 0; x < addToNewMonth; x++) {
@@ -119,9 +127,11 @@ class TrendPage extends Component {
       switch(element.dateState) {
         case "good":
           theState = "o";
+          overCount = overCount + 1;
           break;
         case "bad":
           theState = "u";
+          underCount = underCount + 1;
           break;
         default:
           theState = "n";
@@ -140,9 +150,15 @@ class TrendPage extends Component {
         }
 
         thisMonth.weeks.push(thisWeek);
+        thisMonth.over = overCount;
+        thisMonth.under = underCount;
+        thisMonth.percent = Math.round((overCount/((overCount + underCount)/100)));
         fullTrend.push(thisMonth);
+
       }
     });
+
+    let pPercent = "pGreen";
 
     //fullTrend.reverse();
 
@@ -151,9 +167,17 @@ class TrendPage extends Component {
         {
           fullTrend.map((thisTrend, index) => {
             if (thisTrend.monthName !== undefined) {
+
+              if(thisTrend.over >= thisTrend.under) {
+                pPercent = "pGreen";
+              } else {
+                pPercent = "pRed";
+              }
+
               return (
                 <div key={index}>
-                  <p>{thisTrend.monthName}</p>
+                  <p className={pPercent}>{thisTrend.monthName} {thisTrend.percent}%</p>
+                  <p><span className="pGreen">{thisTrend.over}</span> / <span className="pRed">{thisTrend.under}</span></p>
                   <div className="trend">
                     <div className='trendDiv'>
                       <table className="centered">

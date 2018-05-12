@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Icon } from 'react-materialize'
-import EmailForm from './EmailForm'
-import PasswordForm from './PasswordForm'
+import { Button, Icon } from 'react-materialize';
+import EmailForm from './EmailForm';
+import PasswordForm from './PasswordForm';
+import Header from '../Home/Header';
 import '../App/App.css';
 
 
@@ -22,7 +23,7 @@ class SignIn extends Component {
     super(props);
 
     this.state = {
-      flowType: "signUp",
+      flowType: "login",
       email: '',
       password: '',
       message: ''
@@ -220,28 +221,32 @@ class SignIn extends Component {
 
 const flow = this.state.flowType;
 
+let header = null;
 let navButton = null;
 let actionButton = null;
-let resetReqButton = null;
+//let resetReqButton = null;
 let emailFormDiv = null;
 let passwordFormDiv = null;
 let tandc = null;
+let formFieldsCss = "FormFields";
 
 if (flow === "login") {
+  header = <Header />
   navButton = <GoToButton onClick={this.goToSignUp} label="Sign Up" />
   actionButton = <ActionButton onClick={this.login} label="Login" />
   //resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
-  resetReqButton = "";
+  //resetReqButton = "";
   emailFormDiv = <EmailForm handleUserName={this.handleUserName}/>
   passwordFormDiv = <PasswordForm handlePassword={this.handlePassword}/>
 
 } else if (flow === "signUp") {
+  formFieldsCss = "FormFieldsSignUp"
   navButton = <GoToButton onClick={this.goToLogin} label="Login" />
   actionButton = <ActionButton onClick={this.signUp} label="Sign up" />
   emailFormDiv = <EmailForm handleUserName={this.handleUserName}/>
   passwordFormDiv = <PasswordForm handlePassword={this.handlePassword}/>
   //resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
-  resetReqButton = "";
+  //resetReqButton = "";
   tandc = <p> <a className="teal-text text-lighten-2" href="/terms">by signing up you are agreeing to the terms and conditions and the cookie usage policy of UnderOver.</a></p>
 
 } else if (flow === "requestReset") {
@@ -258,20 +263,22 @@ if (flow === "login") {
 
     return (
       <div className="SignInUp">
-        <div className="FormFields">
-          {emailFormDiv}
-          {passwordFormDiv}
-        </div>
+        {header}
+
         <p className="deep-orange-text text-accent-3">{this.state.message}</p>
-        <div className="signInButton">
-          {tandc}
-          {actionButton}
-        </div>
-        <div className="signInNavButton">
-          {navButton}
-        </div>
+
         <div className="bottomDiv">
-          {resetReqButton}
+          <div className={formFieldsCss}>
+            {emailFormDiv}
+            {passwordFormDiv}
+          </div>
+          {tandc}
+          <div className="signInButton">
+            {actionButton}
+          </div>
+          <div className="signInNavButton">
+            {navButton}
+          </div>
         </div>
       </div>
     );

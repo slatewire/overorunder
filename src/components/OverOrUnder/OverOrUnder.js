@@ -3,9 +3,8 @@ import { Button } from 'react-materialize';
 import  HabitScreen from './HabitScreen';
 import Dashboard from '../Dashboard/Dashboard';
 import SetToday from './SetToday/SetToday';
-import DateSet from './DateSet/DateSet';
 import XoverY from './XoverY/XoverY';
-import TrendPage from './TrendPage/TrendPage';
+import Dates from './Dates/Dates';
 import moment from 'moment';
 import '../App/App.css';
 
@@ -297,22 +296,24 @@ componentWillMount() {
           );
             //cardDate={thisDate} habitName ={this.props.habitName}
 
-        } else if (thisScreen === "datesScreen") {
-          return (
-            <div>
-              <DateSet datesData={habitObject.dates} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
-              <div className="bottomDiv">
-                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
-              </div>
-            </div>
-          );
+//        } else if (thisScreen === "datesScreen") {
+//          return (
+//            <div>
+//              <div className="headerRow">
+//                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+//              </div>
+//              <DateSet datesData={habitObject.dates} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
+//            </div>
+//          );
         } else if (thisScreen === "trendScreen") {
 
           return (
             <div>
-              <TrendPage habitData={habitObject} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
-              <div className="bottomDiv">
+              <div className="headerRow">
                 <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+              </div>
+              <div>
+                <Dates datesData={habitObject.dates} habitData={habitObject} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
               </div>
             </div>
           );
@@ -320,38 +321,30 @@ componentWillMount() {
 
           return (
             <div>
-              <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton}/>
-              <div className="bottomDiv">
-                <Button floating fab='horizontal' className='teal lighten-2' waves='light' icon='menu' >
-                  <Button floating icon='date_range' waves='light' className='grey' onClick={this.handleDatesButton} />
-                  <Button floating icon='menu' waves='light' className='grey' onClick={this.handleMenuButton}/>
-                </Button>
+              <div className="headerRow">
+                <Button floating icon='menu' waves='light' className='teal lighten-2' onClick={this.handleMenuButton}/>
               </div>
+              <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton}/>
             </div>
           );
-
-
-          //componentToShow = <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
-          // menuButton = <Button floating  className='teal lighten-2' waves='light' icon='menu' onClick={this.handleMenuButton}/>
-
         }
       }
     } else if (thisScreen === "dashboardScreen") {
 
       return (
         <div>
-          <Dashboard handleSignOut={this.handleSignOut}/>
-          <div className="bottomDiv">
+          <div className="headerRow">
             <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
           </div>
+          <Dashboard handleSignOut={this.handleSignOut}/>
         </div>
       );
     }
 
     return (
       <div>
-        {componentToShow}
         {menuButton}
+        {componentToShow}
       </div>
     );
   }

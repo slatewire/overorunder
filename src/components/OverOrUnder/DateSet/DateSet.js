@@ -7,14 +7,13 @@ class DateSet extends Component {
     let myDates = this.props.datesData;
 
     return (
-      <div className="datesContainer">
-        <div className="dateBox">
+      <div>
                 {
                   myDates.map(thisDate => {
                     return <DateBox key={thisDate.theDate} cardDate={thisDate} habitName ={this.props.habitName} handleHabitDateUpdate={this.props.handleHabitDateUpdate}/>
                   })
                 }
-        </div>
+    
       </div>
     );
   }

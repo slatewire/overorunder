@@ -28,7 +28,7 @@ class Percent extends Component {
     return (
       <div>
         {pc}
-        <p className="percentText">{this.props.monthPc}% over the last month</p>
+        <p className="percentText">{this.props.monthPc}% over the last 30 days</p>
         <p className="percentText">{futurepc}% of the remaining days needed, which is {toWin} days</p>
       </div>
     );

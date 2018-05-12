@@ -49,11 +49,14 @@ handleHabitDateUpdateBad (habit, date, oldState, newState) {
       let dateStringB = moment(this.state.date).format('MMM Do');
       dateString = dateString + " " + dateStringB;
 
+      let sig = "sigNotSet";
       let pTag = null;
       if (this.state.dateState === 'bad') {
         pTag = <p className="deep-orange-text text-accent-3">{dateString}</p>
+        sig = "sigBad";
       } else if (this.state.dateState === 'good') {
         pTag = <p className="teal-text text-lighten-2">{dateString}</p>
+        sig = "sigGood";
       } else {
         pTag = <p>{dateString}</p>
       }
@@ -61,6 +64,7 @@ handleHabitDateUpdateBad (habit, date, oldState, newState) {
       return (
         <div className="card dateCard">
           <div className="card-content">
+            <div className={sig}></div>
             {pTag}
               <div className="trendDiv">
                 <Button className="dateButton teal lighten-2" waves='green' node='a' onClick={this.handleHabitDateUpdateGood}><Icon>check</Icon></Button>

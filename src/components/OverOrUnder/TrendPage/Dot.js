@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Button, Icon, Badge, Chip } from 'react-materialize';
+import { Modal, Button, Icon } from 'react-materialize';
 import moment from 'moment';
 import '../../App/App.css';
 
