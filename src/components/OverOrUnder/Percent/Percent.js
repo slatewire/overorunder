@@ -4,7 +4,7 @@ class Percent extends Component {
   render() {
 
     const daysToGo = this.props.total - (this.props.notSet + this.props.over + this.props.under);
-    const toWin = Math.round((((this.props.total - this.props.notSet + this.props.oldOver + this.props.oldUnder)/ 2) + 0.5) - (this.props.over + this.props.oldOver));
+    const toWin = Math.round(((((this.props.total + this.props.oldOver + this.props.oldUnder) - this.props.notSet)/ 2) + 0.5) - (this.props.over + this.props.oldOver));
 
     let currentpc = 0
     if ((this.props.over === 0) && (this.props.under === 0)) {
@@ -17,6 +17,7 @@ class Percent extends Component {
     }
 
     const futurepc = Math.round(toWin / (daysToGo/100));
+    //const toWin = futurepc * daysToGo;
 
     let pc = null;
     if (currentpc >= 50) {

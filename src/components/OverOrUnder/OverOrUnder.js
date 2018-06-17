@@ -17,6 +17,7 @@ class OverOrUnder extends Component {
 
     this.state = {
       myScreen: 'habitScreen',
+      myScreenName: "",
       habits: [],
       currentHabit: -1,
       myToken: '',
@@ -29,6 +30,8 @@ class OverOrUnder extends Component {
     this.handleHabitDateUpdate = this.handleHabitDateUpdate.bind(this);
     this.handleDatesButton = this.handleDatesButton.bind(this);
     this.handleTrendScreenButton = this.handleTrendScreenButton.bind(this);
+    this.handleSetScreenName = this.handleSetScreenName.bind(this);
+    this.handleSetMyScreen = this.handleSetMyScreen.bind(this);
   }
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
@@ -156,7 +159,7 @@ componentWillMount() {
       newState =  "dashboardScreen";
     } else if ((currentState === 'dashboardScreen') || (currentState === "datesScreen") || (currentState === "trendScreen")) {
       newState = "habitScreen";
-    } else if (currentState === 'habitDetails') {
+    } else if ((currentState === 'habitDetails') || (currentState === "settingsScreen") || (currentState === "gamesScreen")) {
       newState = "dashboardScreen";
     } else {
       // we have a real problem with state
@@ -173,6 +176,16 @@ componentWillMount() {
   handleDatesButton () {
     this.setState({myScreen: "datesScreen"});
   }
+
+  handleSetMyScreen (newMyScreen) {
+    this.setState({myScreen: newMyScreen});
+  }
+
+  handleSetScreenName (newScreenName) {
+    this.setState({myScreenName: newScreenName})
+  }
+
+
 
   handleGetData () {
 
@@ -200,9 +213,11 @@ componentWillMount() {
       // TURN THE RESPONSE INTO MY DATA
       let habitIndex = -1;
 
-      if(jsonResponse.habits !== null) {
+      if(jsonResponse.userData !== null) {
 
-        jsonResponse.habits.forEach(function(element, index){
+        this.setState({myScreenName: jsonResponse.userData.screenName});
+
+        jsonResponse.userData.habits.forEach(function(element, index){
           if (element.isDefault) {
             habitIndex = index;
           }
@@ -213,7 +228,7 @@ componentWillMount() {
         });
 
         if (habitIndex !== -1) {
-          this.setState({habits: jsonResponse.habits});
+          this.setState({habits: jsonResponse.userData.habits});
           this.setState({currentHabit: habitIndex});
         }
       } else {
@@ -336,7 +351,7 @@ componentWillMount() {
           <div className="headerRow">
             <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
           </div>
-          <Dashboard handleSignOut={this.handleSignOut}/>
+          <Dashboard handleSignOut={this.handleSignOut} myScreenName={this.state.myScreenName} handleSetScreenName={this.handleSetScreenName} handleSetMyScreen={this.handleSetMyScreen}/>
         </div>
       );
     }

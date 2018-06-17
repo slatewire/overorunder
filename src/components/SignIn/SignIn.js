@@ -262,6 +262,7 @@ if (flow === "login") {
 }
 
     return (
+    <div className="mainContainer">
       <div className="SignInUp">
         {header}
 
@@ -281,6 +282,7 @@ if (flow === "login") {
           </div>
         </div>
       </div>
+    </div>
     );
   }
 }

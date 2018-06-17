@@ -160,7 +160,7 @@ class TrendPage extends Component {
 
     let pPercent = "pGreen";
 
-    //fullTrend.reverse();
+    fullTrend.reverse();
 
     return (
       <div>

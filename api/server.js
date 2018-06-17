@@ -297,7 +297,7 @@ apiRoutes.post('/authenticate', function(req, res) {
               user: user.name
             };
             var token = jwt.sign(payload, app.get('superSecret'), {
-              expiresIn: 60*60*24 // expires in 24 hours
+              expiresIn: 60*60*24*365 // expires in 24 hours
             });
 
           // return the information including token as JSON
@@ -381,7 +381,7 @@ apiRoutes.get('/userData', function(req, res) {
 
       if (user) {
 
-        res.json({ success: true, message: 'found the user', habits: user.habits});
+        res.json({ success: true, message: 'found the user', userData: {habits: user.habits, screenName: user.screenName}});
       } else {
         return res.json({ success: false, message: 'Failed to find the user.' });
       }
@@ -454,6 +454,27 @@ apiRoutes.post('/updateDateState', function(req, res) {
     }
   });
 });
+
+apiRoutes.post('/updateScreenName', function(req, res) {
+
+  User.findOne({
+    name: req.decoded.user
+  }, function(err, user) {
+
+    if (err) throw err;//
+
+    if (user) {
+      User.update({name: req.decoded.user},{$set: {screenName: req.body.screenName}}, function(err, count, status) {
+
+        if (err) throw err;
+
+        res.json({ success: true, message: 'screenName updated'});
+
+      });
+    }
+  });
+});
+
 
 
 // apply the routes to our application with the prefix /api
