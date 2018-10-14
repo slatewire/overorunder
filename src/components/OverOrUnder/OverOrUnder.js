@@ -21,7 +21,9 @@ class OverOrUnder extends Component {
       habits: [],
       currentHabit: -1,
       myToken: '',
-      lastDateIndex: -1
+      lastDateIndex: -1,
+      oldOver: 0,
+      oldUnder: 0
     };
 
     this.handleSignOut = this.handleSignOut.bind(this);
@@ -32,6 +34,8 @@ class OverOrUnder extends Component {
     this.handleTrendScreenButton = this.handleTrendScreenButton.bind(this);
     this.handleSetScreenName = this.handleSetScreenName.bind(this);
     this.handleSetMyScreen = this.handleSetMyScreen.bind(this);
+    this.handleSetOldOver = this.handleSetOldOver.bind(this);
+    this.handleSetOldUnder = this.handleSetOldUnder.bind(this);
   }
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
@@ -182,10 +186,16 @@ componentWillMount() {
   }
 
   handleSetScreenName (newScreenName) {
-    this.setState({myScreenName: newScreenName})
+    this.setState({myScreenName: newScreenName});
   }
 
+  handleSetOldOver (newOldOver) {
+    this.setState({oldOver: newOldOver});
+  }
 
+  handleSetOldUnder (newOldUnder) {
+    this.setState({oldUnder: newOldUnder});
+  }
 
   handleGetData () {
 
@@ -217,15 +227,28 @@ componentWillMount() {
 
         this.setState({myScreenName: jsonResponse.userData.screenName});
 
+        let oldOverScore = 0;
+        let oldUnderScore = 0;
+
         jsonResponse.userData.habits.forEach(function(element, index){
           if (element.isDefault) {
             habitIndex = index;
+
+            if(element.oldOver) {
+              oldOverScore = element.oldOver;
+            }
+            if(element.oldUnder) {
+              oldUnderScore = element.oldUnder;
+            }
           }
 
           let reverseDates = element.dates;
           //let datesToSave = reverseDates.reverse();
           reverseDates.reverse();
         });
+
+        this.setState({oldOver: oldOverScore});
+        this.setState({oldUnder: oldUnderScore});
 
         if (habitIndex !== -1) {
           this.setState({habits: jsonResponse.userData.habits});
@@ -351,7 +374,7 @@ componentWillMount() {
           <div className="headerRow">
             <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
           </div>
-          <Dashboard handleSignOut={this.handleSignOut} myScreenName={this.state.myScreenName} handleSetScreenName={this.handleSetScreenName} handleSetMyScreen={this.handleSetMyScreen}/>
+          <Dashboard handleSignOut={this.handleSignOut} myScreenName={this.state.myScreenName} handleSetScreenName={this.handleSetScreenName} handleSetMyScreen={this.handleSetMyScreen} oldOver={this.state.oldOver} oldUnder={this.state.oldUnder} handleSetOldOver={this.handleSetOldOver} handleSetOldUnder={this.handleSetOldUnder}/>
         </div>
       );
     }

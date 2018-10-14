@@ -64,7 +64,7 @@ class ScreenName extends Component {
     return (
       <div>
         <Row>
-            <Input s={12} defaultValue={this.state.screenName} label="screen name" onChange={this.handleScreenNameChange.bind(this)}/>
+            <Input s={12} type="number" class="validate" defaultValue={this.state.screenName} label="screen name" onChange={this.handleScreenNameChange.bind(this)}/>
         </Row>
         <div className="signInButton">
           <Button className="updateSceenNameButton teal lighten-2" waves='green' node='a' onClick={this.handleScreenNameUpdate}>save changes</Button>

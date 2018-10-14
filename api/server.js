@@ -475,6 +475,36 @@ apiRoutes.post('/updateScreenName', function(req, res) {
   });
 });
 
+apiRoutes.post('/updateOldScore', function(req, res) {
+  User.findOne({
+    name: req.decoded.user
+  }, function(err, user) {
+
+    if (err) throw err;//
+
+    if (user) {
+
+      // now have the users data block - so store a copy
+      var newUser = user;
+      newUser.habits.forEach(function(thisHabit) {
+        if (thisHabit.title === req.body.habit) {
+          // UPDATE according to old state new state etc//
+          thisHabit["oldOver"] = req.body.over;
+          thisHabit["oldUnder"] = req.body.under;
+        }
+      });
+
+      User.update({name: req.decoded.user},{$set: {habits: newUser.habits}}, function(err, count, status) {
+
+        if (err) throw err;
+
+      });
+    }
+  });
+});
+
+
+
 
 
 // apply the routes to our application with the prefix /api
