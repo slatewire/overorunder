@@ -15,6 +15,7 @@ class HabitScreen extends Component {
 
     // need to work out total as we no longer store it on server
     var totalDays = this.props.habitData.dates.length;
+    console.log("TOTAL DAYS ", totalDays);
 
     let trendIndex = 6;
     // have to work out array indexs for the 7 dates

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment'
-import TrendMonth from './TrendMonth';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
+import TrendMonthBlock from './TrendMonthBlock';
 import '../../App/App.css';
 
 class TrendPage extends Component {
@@ -24,7 +25,7 @@ class TrendPage extends Component {
 
     let trendArray = this.props.habitData.dates.slice(trendIndex, (this.props.habitData.dates.length - 1));
     let thisWeek = [{dot: String, date: {}}];
-    let thisMonth = [{monthName: String, over: 0, under: 0, percent: 0, weeks: [thisWeek]}]
+    let thisMonth = [{monthName: String, over: 0, under: 0, percent: 0, weeks: [thisWeek], active: false}]
     let fullTrend = [thisMonth];
     let lastMonth = null;
     let overCount = 0;
@@ -94,6 +95,7 @@ class TrendPage extends Component {
           thisWeek.push({dot: "b", date: element});
         }
 
+        thisMonth.active = false;
         thisMonth.weeks.push(thisWeek);
         thisMonth.over = overCount;
         thisMonth.under = underCount;
@@ -103,7 +105,7 @@ class TrendPage extends Component {
 
         // Start new month
         lastMonth = month;
-        thisMonth = {monthName: month, over: 0, under: 0, percent: 0, weeks: []};
+        thisMonth = {monthName: month, over: 0, under: 0, percent: 0, weeks: [], active: false};
         overCount = 0;
         underCount = 0;
 
@@ -149,6 +151,9 @@ class TrendPage extends Component {
           thisWeek.push({dot: "b", date: element});
         }
 
+        // mark as active month
+        // ToDo
+        thisMonth.active = true;
         thisMonth.weeks.push(thisWeek);
         thisMonth.over = overCount;
         thisMonth.under = underCount;
@@ -160,7 +165,7 @@ class TrendPage extends Component {
 
     let pPercent = "pGreen";
 
-    fullTrend.reverse();
+    //fullTrend.reverse();
 
     return (
       <div>
@@ -174,21 +179,27 @@ class TrendPage extends Component {
                 pPercent = "pRed";
               }
 
-              return (
-                <div key={index}>
-                  <p className={pPercent}>{thisTrend.monthName} {thisTrend.percent}%</p>
-                  <p><span className="pGreen">{thisTrend.over}</span> / <span className="pRed">{thisTrend.under}</span></p>
-                  <div className="trend">
-                    <div className='trendDiv'>
-                      <table className="centered">
+              let passedProps = {
+                key: index,
+                pPercent: pPercent,
+                monthName: thisTrend.monthName,
+                percent: thisTrend.percent,
+                month: thisTrend,
+                habitName: this.props.habitName,
+                handleHabitDateUpdate: this.props.handleHabitDateUpdate
+              };
 
-                        <TrendMonth key={index} month={thisTrend} habitName={this.props.habitName} handleHabitDateUpdate={this.props.handleHabitDateUpdate} />
-
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              );
+              if (thisTrend.active) {
+                return (
+                  <ScrollIntoViewIfNeeded>
+                    <TrendMonthBlock passedData={passedProps} />
+                  </ScrollIntoViewIfNeeded>
+                );
+              } else {
+                return (
+                  <TrendMonthBlock passedData={passedProps} />
+                );
+              }
             }
             return <div key={index}></div> ;
           })
