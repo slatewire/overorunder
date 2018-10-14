@@ -15,19 +15,29 @@ class HabitScreen extends Component {
 
     // need to work out total as we no longer store it on server
     var totalDays = this.props.habitData.dates.length;
-    console.log("TOTAL DAYS ", totalDays);
 
+    let notSet = 0;
     let trendIndex = 6;
+    let now = moment();
+    let nowString = now.format('YYYY-MM-DD');
     // have to work out array indexs for the 7 dates
+    // at the same time lets do not set count
     this.props.habitData.dates.forEach(function(element, index){
 
       let date = element.theDate;
-      let now = moment();
-      let nowString = now.format('YYYY-MM-DD');
+      //let now = moment();
+      //let nowString = now.format('YYYY-MM-DD');
 
       if (date === nowString) {
         trendIndex = index;
       }
+
+      if (date < nowString) {
+        if (element.dateState === "notSet"){
+          notSet = notSet +1;
+        }
+      }
+
     });
 
     return (
@@ -35,7 +45,7 @@ class HabitScreen extends Component {
         <XoverY over={this.props.habitData.over} under={this.props.habitData.under} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} />
         <Trend daysAgo7={this.props.habitData.dates[trendIndex+7].dateState} daysAgo6={this.props.habitData.dates[trendIndex+6].dateState} daysAgo5={this.props.habitData.dates[trendIndex+5].dateState} daysAgo4={this.props.habitData.dates[trendIndex+4].dateState} daysAgo3={this.props.habitData.dates[trendIndex+3].dateState} daysAgo2={this.props.habitData.dates[trendIndex+2].dateState} daysAgo1={this.props.habitData.dates[trendIndex+1].dateState} />
         <Button className="habitButton" floating small onClick={this.props.handleTrendScreenButton} icon='date_range'></Button>
-        <Percent over={this.props.habitData.over} under={this.props.habitData.under} total={totalDays} notSet={this.props.habitData.notSet} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} monthPc={this.props.monthPc}/>
+        <Percent over={this.props.habitData.over} under={this.props.habitData.under} total={totalDays} notSet={notSet} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} monthPc={this.props.monthPc}/>
       </div>
     );
   }
