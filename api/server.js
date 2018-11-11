@@ -11,6 +11,7 @@ var validator   = require("email-validator");
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
 var argv = require( 'argv' );
+var nodemailer = require('nodemailer');
 
 // get our mongoose model
 var User   = require('./app/models/user');
@@ -45,88 +46,93 @@ app.use(morgan('dev'));
 ////////////////////////////////////
 // Admin Function first
 
-var args = argv.option([
-    {
-      name: 'doOldDates',
-      short: 'y',
-      type: 'boolean'
-    },
-    {
-        name: 'user',
-        short: 'n',
-        type: 'string'
-    },
-    {
-        name: 'over',
-        short: 'o',
-        type: 'int'
-    },
-    {
-        name: 'under',
-        short: 'u',
-        type: 'int'
-    },
-    {
-        name: 'dates',
-        short: 'd',
-        type: 'boolean'
-    },
-    {
-        name: 'habit',
-        short: 'h',
-        type: 'string'
-    }
-]).run()
+//var args = argv.option([
+//    {
+//      name: 'doOldDates',
+//      short: 'y',
+//      type: 'boolean'
+//    },
+//    {
+//        name: 'user',
+//        short: 'n',
+//        type: 'string'
+//    },
+//    {
+//        name: 'over',
+//        short: 'o',
+//        type: 'int'
+//    },
+//    {
+//        name: 'under',
+//        short: 'u',
+//        type: 'int'
+//    },
+//    {
+//        name: 'dates',
+//        short: 'd',
+//        type: 'boolean'
+//    },
+//    {
+//        name: 'habit',
+//        short: 'h',
+//        type: 'string'
+//    }
+//]).run()
+//
+//console.log("the args: ", args);
+////console.log("try to unwrap ", args.options.user);
+//
+//if (args.options.doOldDates) {
+//
+//  User.findOne({
+//    name: args.options.user
+//  }, function(err, user) {
+//
+//    if (err) throw err;
+//
+//    if (!user) {
+//      console.log("No user");
+//      return;
+//    } else if (user) {
+//
+//
+//      console.log("hellllllo");
+//      //return;
+//      // now have the users data block - so store a copy
+//      var newUser = user;
+//      newUser.habits.forEach(function(thisHabit) {
+//        if (thisHabit.title === args.options.habit) {
+//          // UPDATE according to old state new state etc//
+//console.log("Found habit to update");
+//          thisHabit["oldOver"] = args.options.over;
+//          thisHabit["oldUnder"] = args.options.under;
+//console.log("old over: ", args.options.over);
+//console.log("THIS HABIT ", thisHabit);
+//        }
+//      });
+//
+//console.log("New Data", newUser.habits);
+//
+//      User.update({name: args.options.user},{$set: {habits: newUser.habits}}, function(err, count, status) {
+//
+//        if (err) throw err;
+//
+//        console.log("old over under score set");
+//
+//      });
+//    }
+//  });
+//}
 
-console.log("the args: ", args);
-//console.log("try to unwrap ", args.options.user);
 
-if (args.options.doOldDates) {
-
-  User.findOne({
-    name: args.options.user
-  }, function(err, user) {
-
-    if (err) throw err;
-
-    if (!user) {
-      console.log("No user");
-      return;
-    } else if (user) {
-
-
-      console.log("hellllllo");
-      //return;
-      // now have the users data block - so store a copy
-      var newUser = user;
-      newUser.habits.forEach(function(thisHabit) {
-        if (thisHabit.title === args.options.habit) {
-          // UPDATE according to old state new state etc//
-console.log("Found habit to update");
-          thisHabit["oldOver"] = args.options.over;
-          thisHabit["oldUnder"] = args.options.under;
-console.log("old over: ", args.options.over);
-console.log("THIS HABIT ", thisHabit);
-        }
-      });
-
-console.log("New Data", newUser.habits);
-
-      User.update({name: args.options.user},{$set: {habits: newUser.habits}}, function(err, count, status) {
-
-        if (err) throw err;
-
-        console.log("old over under score set");
-
-      });
-    }
-  });
+const randomString = length => {
+  let text = "";
+  const possible = "abcdefghijklmnopqrstuvwxyz0123456789_-.";
+  for (let i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
 }
-
-
-
-
-
 
 // =======================
 // routes ================
@@ -141,6 +147,99 @@ app.get('/', function(req, res) {
 
 // get an instance of the router for api routes
 var apiRoutes = express.Router();
+
+apiRoutes.put('/forgotpass', function(req, res) {
+
+// am using ok error code to display message in app
+// should be checking app side if email and not sending if
+// not correct and sending error codes back here!
+  if (!req.body) return res.status(200).json({success: false, message: ''});
+  if (!req.body.email) return res.status(200).json({success: false, message: ''});
+
+  User.findOne({
+    name: req.body.email
+  }, function(err, user) {
+
+    if (err) return res.status(200).json({success: false, message: 'Email address not found'});
+
+    if (user) {
+
+      const token = randomString(40);
+      const emailData = {
+        from: 'matthew.denyer@slatewire.com',
+        to: req.body.email,
+        subject: "OverOrUnder Password Reset Instructions",
+        text: `Please use the following link for instructions to reset your password: https://overorunder.io/reset/${token}`,
+        html: `<p>Please use the following link for instructions to reset your password:</p><p>https://overorunder.io/reset/${token}</p>`
+      };
+
+      User.update({name: req.body.email},{$set: {resetPassLink: token}}, function(err, count, status) {
+
+        if (err) return res.status(200).json({success: false, message: 'Email address not found'});
+
+        console.log("have update db with token success");
+
+        var transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'matthew.denyer@slatewire.com',
+            pass: 'Mr.6wpfD00rway'
+          }
+        });
+
+        transporter.sendMail(emailData, function(error, info){
+          if (error) {
+            console.log(error);
+            return res.status(200).json({success: false, message: 'Problem sending the reset email'});
+          } else {
+            return res.status(200).json({success: true, message: 'An email with instructions on how to reset your passwaord has been sent.'});
+          }
+        });
+
+
+      });
+
+    } else if (!user) {
+      return res.status(200).json({success: false, message: 'Email address not found'});
+    }
+  });
+});
+
+apiRoutes.post('/resetpass', function(req, res) {
+  if (!req.body.code) return res.status(200).json({success: false, message: 'No request code provided'});
+
+  if (req.body.code === '') {
+    return res.status(200).json({success: false, message: 'No request code provided'});
+  } else {
+
+    User.findOne({
+      resetPassLink: req.body.code
+    }, function(err, user) {
+
+      if (err) throw err;
+
+      if (user) {
+        // we have matched an input reset code to a user request codes
+        // so update the PWD
+        // if in date TODO
+        user.password = req.body.password;
+        user.resetPassLink = '';
+        user.save(function(err) {
+          if (err) throw err;
+
+            return res.status(200).json({success: true, message: 'password has been reset, please login'});
+          });
+
+          // else send back out of date message
+
+      } else {
+        // send back no user request found
+        return res.status(200).json({success: false, message: 'password reset request not found'});
+      }
+    });
+  }
+
+});
 
 apiRoutes.post('/validate', function(req, res) {
 

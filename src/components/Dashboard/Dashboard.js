@@ -25,7 +25,6 @@ class Dashboard extends Component {
   }
 
   handleHabitScreen () {
-    console.log("HabitScreen please");
     this.setState({currentScreen: "settings"});
   }
 
@@ -40,7 +39,6 @@ class Dashboard extends Component {
 
     switch(this.state.currentScreen) {
       case "menu":
-          console.log("bob");
           componentToShow =
                             <div className="centeredMenu">
                               <div className="menuBut">

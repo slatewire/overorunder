@@ -5,6 +5,7 @@ import Dashboard from '../Dashboard/Dashboard';
 import SetToday from './SetToday/SetToday';
 import XoverY from './XoverY/XoverY';
 import Dates from './Dates/Dates';
+import StatsPage from './Percent/StatsPage/StatsPage'
 import moment from 'moment';
 import '../App/App.css';
 
@@ -36,6 +37,7 @@ class OverOrUnder extends Component {
     this.handleSetMyScreen = this.handleSetMyScreen.bind(this);
     this.handleSetOldOver = this.handleSetOldOver.bind(this);
     this.handleSetOldUnder = this.handleSetOldUnder.bind(this);
+    this.handleStatsPageButton = this.handleStatsPageButton.bind(this);
   }
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
@@ -125,8 +127,6 @@ class OverOrUnder extends Component {
       this.setState({habits: newHabits});
       this.setState({lastDateIndex: datesIndex});
     }
-
-    this.forceUpdate();
   }
 
 componentWillMount() {
@@ -161,7 +161,7 @@ componentWillMount() {
 
     if (currentState === 'habitScreen') {
       newState =  "dashboardScreen";
-    } else if ((currentState === 'dashboardScreen') || (currentState === "datesScreen") || (currentState === "trendScreen")) {
+    } else if ((currentState === 'dashboardScreen') || (currentState === "datesScreen") || (currentState === "trendScreen") || (currentState === "statsScreen")) {
       newState = "habitScreen";
     } else if ((currentState === 'habitDetails') || (currentState === "settingsScreen") || (currentState === "gamesScreen")) {
       newState = "dashboardScreen";
@@ -175,6 +175,10 @@ componentWillMount() {
 
   handleTrendScreenButton () {
     this.setState({myScreen: "trendScreen"});
+  }
+
+  handleStatsPageButton () {
+    this.setState({myScreen: "statsScreen"});
   }
 
   handleDatesButton () {
@@ -268,7 +272,7 @@ componentWillMount() {
     let componentToShow = null;
     let menuButton = null;
 
-    if (thisScreen === "habitScreen" || thisScreen === "datesScreen" || thisScreen === "trendScreen") {
+    if (thisScreen === "habitScreen" || thisScreen === "datesScreen" || thisScreen === "trendScreen" || thisScreen === "statsScreen") {
       // find the habit
       let currentHabit = this.state.currentHabit;
       let habitObject = null;
@@ -355,14 +359,27 @@ componentWillMount() {
               </div>
             </div>
           );
+        } else if (thisScreen === "statsScreen") {
+
+          let total = habitObject.dates.length;
+          return (
+            <div>
+              <div className="headerRow">
+                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+              </div>
+              <div>
+                <StatsPage total={total} habitData={habitObject} monthPc={monthPc} over={habitObject.over} under={habitObject.under} oldOver={habitObject.oldOver} oldUnder={habitObject.oldUnder}/>
+              </div>
+            </div>
+          );
         } else {
 
           return (
             <div>
               <div className="headerRow">
-                <Button floating icon='menu' waves='light' className='teal lighten-2' onClick={this.handleMenuButton}/>
+
               </div>
-              <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton}/>
+              <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton} handleMenuButton={this.handleMenuButton} handleStatsPageButton={this.handleStatsPageButton} />
             </div>
           );
         }
@@ -390,3 +407,5 @@ componentWillMount() {
 
 export default OverOrUnder;
 // style={{bottom: '45px', right: '24px'}}
+// button in header rom for habit screenName
+//<Button floating icon='menu' waves='light' className='teal lighten-2' onClick={this.handleMenuButton}/>

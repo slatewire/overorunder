@@ -33,7 +33,6 @@ class SignIn extends Component {
     this.handlePassword = this.handlePassword.bind(this);
     this.login = this.login.bind(this);
     this.signUp = this.signUp.bind(this);
-    this.resetPwd = this.resetPwd.bind(this);
     this.resetPwdRequest = this.resetPwdRequest.bind(this);
     this.goToLogin = this.goToLogin.bind(this);
     this.goToSignUp = this.goToSignUp.bind(this);
@@ -205,13 +204,44 @@ class SignIn extends Component {
 
   }
 
-  resetPwd () {
+  async resetPwdRequest () {
+    //this.setState({message: ""});
 
-  }
+console.log("Reset PWD call");
 
-  resetPwdRequest () {
-    this.setState({message: ""});
+    let url = 'http://localhost:8080/api/forgotpass';
 
+    if (process.env.REACT_APP_ENV === 'dev') {
+      url = 'http://localhost:8080/api/forgotpass';
+    } else if (process.env.REACT_APP_ENV === 'prod') {
+      url = 'https://api.overorunder.io/api/forgotpass';
+    } else {
+      url = 'http://localhost:8080/api/forgotpass';
+    }
+
+    try {
+      let response = await fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify({email: this.state.email}),
+        headers: {
+          "Content-type": "application/json",
+          "crossDomain": true,
+        }
+      });
+      if (response.ok) {
+        let jsonResponse = await response.json();
+
+        if(jsonResponse.success) {
+
+          this.setState({message: jsonResponse.message});
+        } else {
+          this.setState({message: jsonResponse.message});
+        }
+      }
+      // no else for not ok!
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   render() {
@@ -224,7 +254,7 @@ const flow = this.state.flowType;
 let header = null;
 let navButton = null;
 let actionButton = null;
-//let resetReqButton = null;
+let resetReqButton = null;
 let emailFormDiv = null;
 let passwordFormDiv = null;
 let tandc = null;
@@ -234,7 +264,7 @@ if (flow === "login") {
   header = <Header />
   navButton = <GoToButton onClick={this.goToSignUp} label="Sign Up" />
   actionButton = <ActionButton onClick={this.login} label="Login" />
-  //resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
+  resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
   //resetReqButton = "";
   emailFormDiv = <EmailForm handleUserName={this.handleUserName}/>
   passwordFormDiv = <PasswordForm handlePassword={this.handlePassword}/>
@@ -245,19 +275,19 @@ if (flow === "login") {
   actionButton = <ActionButton onClick={this.signUp} label="Sign up" />
   emailFormDiv = <EmailForm handleUserName={this.handleUserName}/>
   passwordFormDiv = <PasswordForm handlePassword={this.handlePassword}/>
-  //resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
-  //resetReqButton = "";
+  // resetReqButton = <GoToButton onClick={this.goToResetPwdReq} label="Reset Password" />
+  // resetReqButton = "";
   tandc = <p> <a className="teal-text text-lighten-2" href="/terms">by signing up you are agreeing to the terms and conditions and the cookie usage policy of UnderOver.</a></p>
 
 } else if (flow === "requestReset") {
   navButton = <GoToButton onClick={this.goToLogin} label="Login"/>
-  actionButton = <ActionButton onClick={this.ResetPwdRequest} label="Reset Password" />
-  emailFormDiv = <EmailForm handleUserName={this.handleUserName}/>
+  actionButton = <ActionButton onClick={this.resetPwdRequest} label="Reset Password" />
+  emailFormDiv = <div className="FormFieldsSignUp"><EmailForm handleUserName={this.handleUserName}/></div>
 
 } else {
   navButton = <GoToButton onClick={this.goToLogin} label="Login" />
   actionButton = <ActionButton onClick={this.SignUp} label="Sign up" />
-  emailFormDiv = <EmailForm handleUserName={this.handleUserName}/>
+  emailFormDiv = <div className="FormFieldsSignUp"><EmailForm handleUserName={this.handleUserName}/></div>
   passwordFormDiv = <PasswordForm handlePassword={this.handlePassword}/>
 }
 
@@ -279,6 +309,9 @@ if (flow === "login") {
           </div>
           <div className="signInNavButton">
             {navButton}
+          </div>
+          <div className="resetNavButton">
+            {resetReqButton}
           </div>
         </div>
       </div>

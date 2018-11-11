@@ -13,7 +13,7 @@ class TrendMonthBlock extends Component {
           <div className='trendDiv'>
             <table className="centered">
 
-              <TrendMonth key={this.props.passedData.index} month={this.props.passedData.month} habitName={this.props.passedData.habitName} handleHabitDateUpdate={this.props.passedData.handleHabitDateUpdate} />
+              <TrendMonth key={this.props.passedData.index} month={this.props.passedData.month} habitName={this.props.passedData.habitName} modalTrendArray={this.props.modalTrendArray} handleHabitDateUpdate={this.props.passedData.handleHabitDateUpdate} />
 
             </table>
           </div>

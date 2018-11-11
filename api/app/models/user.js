@@ -8,6 +8,7 @@ var User = new Schema({
     name: { type: String, required: true, index: { unique: true } },
     screenName: {type: String},
     password: { type: String, required: true },
+    resetPassLink: {type: String},
     admin : { type: Boolean, default: false},
     habits: [{
               title: {type: String, required: true},

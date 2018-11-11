@@ -1,17 +1,57 @@
 import React, { Component } from 'react';
 import moment from 'moment'
+import { Modal } from 'react-materialize';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 import TrendMonthBlock from './TrendMonthBlock';
+import ModalButtons from './ModalButtons';
 import '../../App/App.css';
 
 class TrendPage extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      update: false,
+      habitDates: this.props.habitData.dates
+    };
+
+    this.handleHabitDateUpdateAndState = this.handleHabitDateUpdateAndState.bind(this);
+  }
+
+  handleHabitDateUpdateAndState (habit, date, oldState, newState) {
+    this.props.handleHabitDateUpdate(habit, date, oldState, newState);
+    console.log(this.state.habitDates);
+    this.setState({update: true});
+    let newHabitDates = this.state.habitDates;
+    newHabitDates.forEach(function(element, index){
+      console.log("foreach");
+
+      let date = element.theDate;
+      let now = moment();
+      let nowString = now.format('YYYY-MM-DD');
+
+      if (date === nowString) {
+        console.log("found the date");
+        element.dateState = newState;
+        //this.setState({habitDates: newHabitDates});
+        console.log("local date state set");
+      }
+
+    });
+
+    console.log("update the state");
+    this.setState({habitDates: newHabitDates});
+
+    this.forceUpdate();
+  }
 
   render() {
 
+console.log("Render");
     // need to work out total as we no longer store it on server
     let trendIndex = 6;
     // have to work out array indexs for the 7 dates
-    this.props.habitData.dates.forEach(function(element, index){
+    this.state.habitDates.forEach(function(element, index){
 
       let date = element.theDate;
       let now = moment();
@@ -22,8 +62,7 @@ class TrendPage extends Component {
       }
     });
 
-
-    let trendArray = this.props.habitData.dates.slice(trendIndex, (this.props.habitData.dates.length - 1));
+    let trendArray = this.state.habitDates.slice(trendIndex, (this.state.habitDates.length - 1));
     let thisWeek = [{dot: String, date: {}}];
     let thisMonth = [{monthName: String, over: 0, under: 0, percent: 0, weeks: [thisWeek], active: false}]
     let fullTrend = [thisMonth];
@@ -32,6 +71,12 @@ class TrendPage extends Component {
     let underCount = 0;
 
     trendArray = trendArray.reverse();
+
+    let modalTrendArray = trendArray;
+    if (trendArray.length > 14) {
+      modalTrendArray = trendArray.slice((trendArray.length - 15), (trendArray.length - 1))
+    }
+    modalTrendArray = modalTrendArray.reverse();
 
     trendArray.forEach(function(element, index) {
       //fullTrend = [];
@@ -43,31 +88,31 @@ class TrendPage extends Component {
 
       switch(day) {
         case "Mon":
-          addToLastMonth = 6;
+          addToLastMonth = 0;
           addToNewMonth = 0;
           break;
         case "Tue":
-          addToLastMonth = 5;
+          addToLastMonth = 6;
           addToNewMonth = 1;
           break;
         case "Wed":
-          addToLastMonth = 4;
+          addToLastMonth = 5;
           addToNewMonth = 2;
           break;
         case "Thu":
-          addToLastMonth = 3;
+          addToLastMonth = 4;
           addToNewMonth = 3;
           break;
         case "Fri":
-          addToLastMonth = 2;
+          addToLastMonth = 3;
           addToNewMonth = 4;
           break;
         case "Sat":
-          addToLastMonth = 1;
+          addToLastMonth = 2;
           addToNewMonth = 5;
           break;
         case "Sun":
-          addToLastMonth = 0;
+          addToLastMonth = 1;
           addToNewMonth = 6;
           break;
         default:
@@ -91,7 +136,7 @@ class TrendPage extends Component {
       } else if (lastMonth !== month) {
 
         // end old month
-        for (let i = 0; i <= addToLastMonth; i++) {
+        for (let i = 0; i < addToLastMonth; i++) {
           thisWeek.push({dot: "b", date: element});
         }
 
@@ -147,7 +192,7 @@ class TrendPage extends Component {
       if (date2 === nowString2) {
       // last element  in array
         thisWeek.pop();
-        for (let i = 0; i <= addToLastMonth; i++) {
+        for (let i = 0; i < addToLastMonth; i++) {
           thisWeek.push({dot: "b", date: element});
         }
 
@@ -168,6 +213,9 @@ class TrendPage extends Component {
     //fullTrend.reverse();
 
     return (
+      <div>
+      <Modal bottomSheet className="SignInUp"
+        trigger={<button className="trendButton">
       <div>
         {
           fullTrend.map((thisTrend, index) => {
@@ -191,13 +239,13 @@ class TrendPage extends Component {
 
               if (thisTrend.active) {
                 return (
-                  <ScrollIntoViewIfNeeded>
-                    <TrendMonthBlock passedData={passedProps} />
+                  <ScrollIntoViewIfNeeded key={index}>
+                    <TrendMonthBlock key={index} passedData={passedProps} modalTrendArray={modalTrendArray}/>
                   </ScrollIntoViewIfNeeded>
                 );
               } else {
                 return (
-                  <TrendMonthBlock passedData={passedProps} />
+                  <TrendMonthBlock key={index} passedData={passedProps} modalTrendArray={modalTrendArray} />
                 );
               }
             }
@@ -205,6 +253,14 @@ class TrendPage extends Component {
           })
         }
       </div>
+
+      </button>}>
+
+      <p>Update the past 14 days</p>
+      <ModalButtons modalTrendArray={modalTrendArray} handleHabitDateUpdate={this.handleHabitDateUpdateAndState} habitName={this.props.habitName} />
+      </Modal>
+      </div>
+
     );
   }
 }

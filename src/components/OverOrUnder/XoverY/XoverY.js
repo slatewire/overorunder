@@ -5,6 +5,8 @@ class XoverY extends Component {
 
     const over = this.props.over + this.props.oldOver;
     const under = this.props.under + this.props.oldUnder;
+    //console.log("over: ", over);
+    //console.log("under: ", under);
 
     return (
       <div>

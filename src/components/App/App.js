@@ -17,7 +17,7 @@ class App extends Component {
           <Route exact path='/' component={SignIn}/>
           <Route exact path='/signin/' component={SignIn}/>
           <Route exact path='/terms/' component={Terms}/>
-          <Route exact path='/reset/' component={Reset}/>
+          <Route exact path='/reset/:code' component={Reset}/>
           <Route exact path='/overorunder/' component={OverOrUnder}/>
         </Switch>
       </div>

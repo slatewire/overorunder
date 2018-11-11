@@ -50,7 +50,7 @@
   margin-top: 20px;
 }
 .trendDiv {
-  width: 200px;
+#  width: 200px;
 #  margin-left: 50px;
 #  margin-right: 50px;
   text-align: center;
@@ -107,6 +107,7 @@
   height: 100%;
   width: 100%;
   overflow-y: scroll;
+  text-align: center;
 }
 
 .dateSwitch {
@@ -155,6 +156,18 @@ h2 {
   width: 100%;
   margin: 0;
   padding-top: 10px;
+}
+
+h3 {
+  padding: .5rem 0;
+  text-align: center;
+  font-family: 'Varela Round', sans-serif;
+  font-size: 2rem;
+  left: 0;
+  top: 0;
+  width: 100%;
+  margin: 0;
+  padding-top: 7px;
 }
 
 p {
@@ -246,6 +259,11 @@ hr {
 
 .signInNavButton {
   text-align: center;
+}
+
+.resetNavButton {
+  text-align: center;
+  margin-top: 15px;
 }
 
 .button1 {
@@ -389,6 +407,33 @@ hr {
     border-radius: 50%;
 }
 
+.trendButton {
+  background-color: #FFF8F0;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.trendButton:focus {
+  background-color: #FFF8F0;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.bottomMenuButton {
+  background-color: grey;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
 td {
   padding: 10, 5;
 }
@@ -444,4 +489,72 @@ td {
 
 .over {
   margin-top: 15px;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #FFF8F0;
+    color: white;
+    text-align: center;
+    # height: 40px;
+    border: none;
+}
+
+.progressBarBox {
+  left: 0;
+  width: 100%;
+  background-color: #A0A8A0;
+  height: 35px;
+  border: none;
+}
+
+
+.progress-bar {
+    width: 100%;
+    background: #A0A8A0;
+    position: relative;
+    border-radius: 5px;
+}
+
+.progress-bar-percentage {
+    background: #4db6ac;
+    padding: 5px 0px;
+    color: #FFF;
+    text-align: center;
+    height: 30px;
+    # width: 60%;
+    border-radius: 5px;
+    vertical-align: middle;
+}
+
+.progress-bar-percentage span {
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    color: #FFF8F0;
+}
+
+.basicButton {
+  background-color: #FFF8F0;
+  text-align: center;
+  border: none;
+}
+
+.basicButton:focus {
+  background-color: #FFF8F0;
+  text-align: center;
+  border: none;
+}
+
+.pie {
+  display: inline-block;
+  float: left;
+}
+
+.learnMore {
+  margin-bottom: 60px;
 }

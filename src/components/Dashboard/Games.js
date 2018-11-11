@@ -73,10 +73,10 @@ class Games extends Component {
       <div className="screenNameLabel">
         <div>
           <Row>
-              <Input s={12} type="number" class="validate" defaultValue={this.state.oldOver} label="past over score" onChange={this.handleOldOverChange.bind(this)}/>
+              <Input s={12} type="number" className="validate" defaultValue={this.state.oldOver} label="past over score" onChange={this.handleOldOverChange.bind(this)}/>
           </Row>
           <Row>
-              <Input s={12} type="number" class="validate" defaultValue={this.state.oldUnder} label="past under score" onChange={this.handleOldUnderChange.bind(this)}/>
+              <Input s={12} type="number" className="validate" defaultValue={this.state.oldUnder} label="past under score" onChange={this.handleOldUnderChange.bind(this)}/>
           </Row>
           <div className="signInButton">
             <Button className="updateSceenNameButton teal lighten-2" waves='green' node='a' onClick={this.handleOldNumbersUpdate}>save changes</Button>

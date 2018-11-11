@@ -12,7 +12,7 @@ class TrendWeek extends Component {
         {
           this.props.week.map((thisDot, index) => {
             return (
-              <Dot key={index} dot={thisDot.dot} date={thisDot.date} habitName={this.props.habitName} handleHabitDateUpdate={this.props.handleHabitDateUpdate} />
+              <Dot key={index} dot={thisDot} />
             );
           })
         }
@@ -22,3 +22,5 @@ class TrendWeek extends Component {
 }
 
 export default TrendWeek;
+
+// <Dot key={index} dot={thisDot.dot} date={thisDot.date} habitName={this.props.habitName} handleHabitDateUpdate={this.props.handleHabitDateUpdate} />
