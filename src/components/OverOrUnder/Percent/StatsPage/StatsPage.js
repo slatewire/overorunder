@@ -86,8 +86,8 @@ class StatsPage extends Component {
       }
     }
 
-    const futurepc = Math.round(toWin / (daysToGo/100));
-    const futureLosePs = Math.round(toLose / (daysToGo/100));
+    //const futurepc = Math.round(toWin / (daysToGo/100));
+    //const futureLosePs = Math.round(toLose / (daysToGo/100));
     //const toWin = futurepc * daysToGo;
 
     //let pc = null;
@@ -173,6 +173,21 @@ class StatsPage extends Component {
       ],
     };
 
+    let winLoseData = {
+    	datasets: [
+        {
+          label: "good days to win",
+    		  data: [toWin],
+    		  backgroundColor: ['#4db6ac']
+    	  },
+        {
+          label: "bad days till lost",
+    		  data: [toLose],
+    		  backgroundColor: ['#ff3d00']
+        }
+      ],
+    };
+
     return (
       <div>
         <div className="signInButton">
@@ -188,8 +203,7 @@ class StatsPage extends Component {
         <HorizontalBar className="pie" data={streakData} />
         <h3 className="teal-text text-lighten-2 percent">Win or Lose</h3>
         <p className="percentText">{daysToGo} days to go</p>
-        <p className="percentText">good days needed <span className="teal-text text-lighten-2 percent">to win {toWin}</span>, which is <span className="teal-text text-lighten-2 percent">{futurepc}%</span></p>
-        <p className="percentText learnMore">bad days <span className="deep-orange-text text-accent-3 percent">until you lose {toLose}</span>, which is <span className="deep-orange-text text-accent-3 percent">{futureLosePs}%</span></p>
+        <HorizontalBar className="pie" data={winLoseData} />
       </div>
     );
   }

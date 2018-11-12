@@ -20,34 +20,25 @@ class TrendPage extends Component {
 
   handleHabitDateUpdateAndState (habit, date, oldState, newState) {
     this.props.handleHabitDateUpdate(habit, date, oldState, newState);
-    console.log(this.state.habitDates);
     this.setState({update: true});
     let newHabitDates = this.state.habitDates;
     newHabitDates.forEach(function(element, index){
-      console.log("foreach");
 
       let date = element.theDate;
       let now = moment();
       let nowString = now.format('YYYY-MM-DD');
 
       if (date === nowString) {
-        console.log("found the date");
         element.dateState = newState;
-        //this.setState({habitDates: newHabitDates});
-        console.log("local date state set");
       }
 
     });
 
-    console.log("update the state");
     this.setState({habitDates: newHabitDates});
-
-    this.forceUpdate();
   }
 
   render() {
 
-console.log("Render");
     // need to work out total as we no longer store it on server
     let trendIndex = 6;
     // have to work out array indexs for the 7 dates
