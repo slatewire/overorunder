@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import XoverY from '../../XoverY/XoverY';
 import moment from 'moment';
-import {Doughnut, HorizontalBar} from 'react-chartjs-2';
+import {Doughnut, HorizontalBar, Line} from 'react-chartjs-2';
+
 
 class StatsPage extends Component {
   render() {
@@ -15,6 +16,12 @@ class StatsPage extends Component {
     let lastState = 'nothing';
     let now = moment();
     let nowString = now.format('YYYY-MM-DD');
+    let lineGraphData = [];
+    let lineGraphLabels = [];
+    let lastMonth = null;
+    let dayCount = 0;
+    let goodDayCount = 0;
+    let thisPercent = 0;
     // have to work out array indexs for the 7 dates
     // at the same time lets do not set count
     this.props.habitData.dates.forEach(function(element, index){
@@ -29,48 +36,114 @@ class StatsPage extends Component {
         }
       }
 
+      if (date < nowString) {
+    console.log("current date ", date);
       // work out the streaks
       if (thisState === "good") {
+    console.log("good");
         if (lastState === "good" || lastState === "nothing") {
+          lastState = "good"
+    console.log("Last state good or nothing");
           currentStreak = currentStreak + 1;
+    console.log("current streak: ", currentStreak);
         } else {
+    console.log("change");
           // this means a change in streak
+    console.log("current ", currentStreak, " badStreak ", badStreak)
           if (currentStreak > badStreak) {
+    console.log("setting bad streak ", currentStreak);
             badStreak = currentStreak;
           }
           if (myStreakNum === -1) {
+    console.log("no Streak num set ", currentStreak);
+            myStreakNum = currentStreak;
+            if (myStreakNum === 0) {myStreakNum = 1}
+            myStreakState = "bad";
+          }
+    console.log("setting streak to 1 and last state to good");
+          lastState = "good";
+          currentStreak = 1;
+        }
+
+      } else if (thisState === "bad") {
+    console.log("bad");
+
+        if (lastState === "bad" || lastState === "nothing") {
+          lastState = "bad"
+    console.log("last state bad or nothing");
+          currentStreak = currentStreak + 1;
+    console.log("current streak ", currentStreak);
+        } else {
+    console.log("change in state");
+          // this means a change in streak
+    console.log("current streak ", currentStreak, " goodStreak ", goodStreak);
+          if (currentStreak > goodStreak) {
+    console.log("setting good streak ", currentStreak);
+            goodStreak = currentStreak;
+          }
+          if (myStreakNum === -1) {
+    console.log("no streak num set ", currentStreak);
             myStreakNum = currentStreak;
             if (myStreakNum === 0) {myStreakNum = 1}
             myStreakState = "good";
           }
+      console.log("current state to 1 and bad");
+          lastState = "bad"
           currentStreak = 1;
-          lastState = "good"
         }
 
-      } else if (thisState === "bad") {
-
-        if (lastState === "bad" || lastState === "nothing") {
-          currentStreak = currentStreak + 1;
-        } else {
-          // this means a change in streak
+      } else {
+        if(lastState === "good"){
           if (currentStreak > goodStreak) {
             goodStreak = currentStreak;
           }
           if (myStreakNum === -1) {
             myStreakNum = currentStreak;
             if (myStreakNum === 0) {myStreakNum = 1}
+            myStreakState = "good";
+          }
+        }
+        if(lastState === "bad"){
+          if (currentStreak > badStreak) {
+            badStreak = currentStreak;
+          }
+          if (myStreakNum === -1) {
+            myStreakNum = currentStreak;
+            if (myStreakNum === 0) {myStreakNum = 1}
             myStreakState = "bad";
           }
-          currentStreak = 1;
-          lastState = "bad"
         }
-
-      } else {
         currentStreak = 0;
         lastState = "notSet";
       }
+      }
+
+      // create the label/percent Array
+      let month = moment(element.theDate).format('MMM');
+      if (date < nowString) {
+        if (lastMonth !== month) {
+          if (lastMonth) {
+            thisPercent = goodDayCount/(dayCount/100);
+            lineGraphData.push(thisPercent);
+            lineGraphLabels.push(lastMonth[0]);
+            dayCount = 0;
+            goodDayCount = 0;
+          }
+        }
+        lastMonth = month;
+        if (element.dateState === 'good' || element.dateState === 'bad') {
+            dayCount = dayCount + 1;
+        }
+        if (element.dateState === 'good') {
+          goodDayCount = goodDayCount +1;
+        }
+      }
 
     });
+    // push the last month!
+    thisPercent = goodDayCount/(dayCount/100);
+    lineGraphData.push(thisPercent);
+    lineGraphLabels.push(lastMonth[0]);
 
     const daysToGo = this.props.total - (notSet + this.props.over + this.props.under);
     const toWin = Math.round(((((this.props.total + this.props.oldOver + this.props.oldUnder) - notSet)/ 2) + 0.5) - (this.props.over + this.props.oldOver));
@@ -188,16 +261,39 @@ class StatsPage extends Component {
       ],
     };
 
+
+
+    let lineData = {
+    //labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J'],
+    labels: lineGraphLabels.reverse(),
+    datasets: [
+      {
+        label: 'Monthly %',
+        fillColor: '#4db6ac',
+        strokeColor: '#4db6ac',
+        pointColor: '#4db6ac',
+        backgroundColor: ['#4db6ac'],
+        pointStrokeColor: '#fff',
+        pointHighlightFill: '#fff',
+        pointHighlightStroke: 'rgba(220,220,220,1)',
+        //data: [65, 59, 80, 81, 56, 55, 40],
+        data: lineGraphData.reverse(),
+      },
+    ]
+  }
+
     return (
       <div>
         <div className="signInButton">
           <XoverY over={this.props.over} under={this.props.under} oldOver={this.props.oldOver} oldUnder={this.props.oldUnder}  />
         </div>
         <h3 className="teal-text text-lighten-2 percent">Trends</h3>
+        <Line data={lineData} />
         <p>last 30 days</p>
         <Doughnut className="pie" data={thirtyDaysData} />
         <p>last 90 days</p>
         <Doughnut className="pie" data={nintyDaysData} />
+
         <h3 className="teal-text text-lighten-2 percent">Streaks</h3>
         <p className="percentText"> current streak of {myStreakNum} {myStreakState} days </p>
         <HorizontalBar className="pie" data={streakData} />
@@ -214,3 +310,5 @@ export default StatsPage;
 //<p className="percentText">{notSet} days have not been set</p>
 //<p className="percentText">top streak of good days <span className="teal-text text-lighten-2 percent">{goodStreak}</span></p>
 //<p className="percentText">top streak of bad  days <span className="deep-orange-text text-accent-3 percent">{badStreak}</span></p>
+
+//<Line data={lineData} />

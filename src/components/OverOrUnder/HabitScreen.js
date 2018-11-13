@@ -93,7 +93,7 @@ class HabitScreen extends Component {
 
           <button className="footer" onClick={this.props.handleMenuButton}>
             <div className="progress-bar">
-              <div className="progress-bar-percentage" style={{width: `${scorePercentage}%` }}><span>drinking - Level {level}</span></div>
+              <div className="progress-bar-percentage" style={{width: `${scorePercentage}%` }}><span>Level {level}</span></div>
             </div>
           </button>
 
