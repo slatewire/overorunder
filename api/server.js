@@ -141,7 +141,6 @@ const randomString = length => {
 
 async function thisUser(name) {
 
-console.log("Passed name ", name)
   let document
     try {
       document = await User.findOne({ name: name })
@@ -153,8 +152,6 @@ console.log("Passed name ", name)
 }
 
 async function league(userRecord, newScore) {
-
-console.log("in league function");
 
   const myRecord = userRecord;
 
@@ -184,7 +181,7 @@ console.log("in league function");
         let lastPosn = 0;
         if (myRecord.name === element.name) {
           score = newScore;
-          if(!myRecord.habits.league) {
+          if(!myRecord.habits[0].league) {
             lastPosn = 0;
           } else {
             if (myRecord.habits[0].league.lastPosition) {
@@ -193,17 +190,18 @@ console.log("in league function");
           }
           me = true;
         } else {
-          if (!element.habits) {
-            if (!element.habits[0].league) {
-              score = 0;
-            } else {
-              score = element.habits[0].league.score;
-              lastPosn = element.habits[0].league.lastPosition;
+          if (element.habits) {
+              element.habits.forEach(function(habit, index){
+                if(habit.title === "drinking") {
+                  if(habit.league) {
+                    if(habit.league.score) {
+                      score = element.habits[0].league.score;
+                      lastPosn = element.habits[0].league.lastPosition;
+                    }
+                  }
+                }
+              });
             }
-          } else {
-            score = 0;
-            lastPosn = 0;
-          }
           me = false;
         }
 
@@ -236,8 +234,8 @@ console.log("in league function");
       });
 
       let update = {score: newScore, lastPosition: myNewPosn};
-      let newHabits = myRecord.habits[0];
-      newHabits.league = update;
+      let newHabits = myRecord.habits;
+      newHabits[0].league = update;
 
       User.update({name: myRecord.name},{$set: {habits: newHabits}}, function(err, count, status) {
         if (err) throw err;
