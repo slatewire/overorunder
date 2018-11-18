@@ -23,7 +23,12 @@ var User = new Schema({
               dates: [{
                       theDate: {type: String, required: true},
                       dateState: {type: String, default: 'notSet'}
-                    }]
+                    }],
+              league: {
+                score: {type: Number},
+                lastUpdate: {type: String},
+                lastPosition: {type: Number}
+              }
             }]
 });
 

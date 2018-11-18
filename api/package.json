@@ -3,7 +3,7 @@
   "main": "server.js",
   "dependencies": {
     "argv": "0.0.2",
-    "bcrypt": "^1.0.3",
+    "bcrypt": "^3.0.2",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "email-validator": "^1.1.1",

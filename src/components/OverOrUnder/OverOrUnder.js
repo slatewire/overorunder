@@ -6,6 +6,7 @@ import SetToday from './SetToday/SetToday';
 import XoverY from './XoverY/XoverY';
 import Dates from './Dates/Dates';
 import StatsPage from './Percent/StatsPage/StatsPage'
+import LeagueBig from './League/LeagueBig';
 import moment from 'moment';
 import '../App/App.css';
 
@@ -24,11 +25,14 @@ class OverOrUnder extends Component {
       myToken: '',
       lastDateIndex: -1,
       oldOver: 0,
-      oldUnder: 0
+      oldUnder: 0,
+      league: [],
+      isAdmin: false
     };
 
     this.handleSignOut = this.handleSignOut.bind(this);
     this.handleGetData = this.handleGetData.bind(this);
+    this.handleScoreCalc = this.handleScoreCalc.bind(this);
     this.handleMenuButton = this.handleMenuButton.bind(this);
     this.handleHabitDateUpdate = this.handleHabitDateUpdate.bind(this);
     this.handleDatesButton = this.handleDatesButton.bind(this);
@@ -38,10 +42,11 @@ class OverOrUnder extends Component {
     this.handleSetOldOver = this.handleSetOldOver.bind(this);
     this.handleSetOldUnder = this.handleSetOldUnder.bind(this);
     this.handleStatsPageButton = this.handleStatsPageButton.bind(this);
+    this.handleLeagueScreenButton = this.handleLeagueScreenButton.bind(this);
+    this.handleGetLeague = this.handleGetLeague.bind(this);
   }
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
-
     // call update on api
     const myToken = localStorage.getItem('overUnderToken');
 
@@ -71,8 +76,9 @@ class OverOrUnder extends Component {
         let jsonResponse = await response.json();
 
         if(jsonResponse.success) {
-
           // TO DO NOT ALOT APART FROM ERROR AND QUEUEING IF NOT NETWORK
+          // updated to update the league!!!!!!!
+          this.handleGetLeague();
         }
       }
     } catch (error) {
@@ -161,7 +167,7 @@ componentWillMount() {
 
     if (currentState === 'habitScreen') {
       newState =  "dashboardScreen";
-    } else if ((currentState === 'dashboardScreen') || (currentState === "datesScreen") || (currentState === "trendScreen") || (currentState === "statsScreen")) {
+    } else if ((currentState === 'dashboardScreen') || (currentState === "datesScreen") || (currentState === "trendScreen") || (currentState === "statsScreen") || (currentState === "league")) {
       newState = "habitScreen";
     } else if ((currentState === 'habitDetails') || (currentState === "settingsScreen") || (currentState === "gamesScreen")) {
       newState = "dashboardScreen";
@@ -185,6 +191,10 @@ componentWillMount() {
     this.setState({myScreen: "datesScreen"});
   }
 
+  handleLeagueScreenButton () {
+    this.setState({myScreen: "league"});
+  }
+
   handleSetMyScreen (newMyScreen) {
     this.setState({myScreen: newMyScreen});
   }
@@ -200,6 +210,136 @@ componentWillMount() {
   handleSetOldUnder (newOldUnder) {
     this.setState({oldUnder: newOldUnder});
   }
+
+  handleScoreCalc (oldState, newState) {
+    let score = 0;
+    let notSet = 0;
+    let level = 0;
+    let over = this.state.habits[this.state.currentHabit].over;
+    let under = this.state.habits[this.state.currentHabit].under;
+    let now = moment();
+    let nowString = now.format('YYYY-MM-DD');
+
+    this.state.habits[this.state.currentHabit].dates.forEach(function(element, index){
+
+      let date = element.theDate;
+
+      if (date < nowString) {
+        if (element.dateState === "notSet"){
+          notSet = notSet +1;
+        }
+      }
+    });
+
+    if (newState === "good") {
+      if (oldState === "notSet") {
+        notSet = notSet -1;
+        over = over +1;
+      } else if (oldState === "good") {
+        // do nothing
+      } else {
+        over = over +1;
+        under = under -1;
+      }
+    } else {
+      if (oldState === "notSet") {
+        notSet = notSet -1;
+        under = under +1;
+      } else if (oldState === 'bad' ) {
+        // do nothing
+      } else {
+        under = under +1;
+        over = over -1;
+      }
+    }
+
+    let numberSet = over + under;
+
+    this.state.habits[this.state.currentHabit].dates.forEach(function(element, index){
+
+      if (numberSet <= 7) {
+        level = 1;
+      } else if (numberSet <= 14 && numberSet > 7) {
+        level = 1.15;
+      } else if (numberSet <=30 && numberSet > 14) {
+        level = 1.33;
+      } else if (numberSet <=45 && numberSet > 30) {
+        level = 1.38;
+      } else if (numberSet <= 60 && numberSet > 45) {
+        level = 1.44;
+      } else if (numberSet <= 90 && numberSet > 60) {
+        level = 1.46;
+      } else if (numberSet <= 120 && numberSet > 90) {
+        level = 1.48;
+      } else if (numberSet <= 150 && numberSet > 120) {
+        level = 1.49;
+      } else if (numberSet <= 183 && numberSet > 150) {
+        level = 1.5;
+      } else if (numberSet <= 240 && numberSet > 183) {
+        level = 1.52;
+      } else if (numberSet <= 300 && numberSet > 240) {
+        level = 1.54;
+      } else {
+        level = 1.55;
+      }
+  });
+
+  // calculate and set the score
+
+  score = Math.round((((100 / (numberSet+(notSet*1.5)))*over)*level)*100);
+  //this.setState({score: score});
+  return score;
+}
+
+async handleGetLeague () {
+  const myToken = localStorage.getItem('overUnderToken');
+  let myScore = this.handleScoreCalc("good", "good");
+
+  let url = 'http://localhost:8080/api/leagueTable/';
+
+  if (process.env.REACT_APP_ENV === 'dev') {
+    url = 'http://localhost:8080/api/leagueTable/';
+  } else if (process.env.REACT_APP_ENV === 'prod') {
+    url = 'https://api.overorunder.io/api/leagueTable';
+  } else {
+    url = 'http://localhost:8080/api/leagueTable/';
+  }
+
+//  return fetch(url, {
+//    headers: {
+//      "Content-Type": 'application/x-www-form-urlencoded',
+//      "x-access-token": myToken
+//    }
+//  }).then(response => {
+//    return response.json();
+//  }).then(jsonResponse => {
+
+try {
+  let response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({score: myScore}),
+    headers: {
+      "Content-type": "application/json",
+      "crossDomain": true,
+      "x-access-token": myToken
+    }
+  });
+  if (response.ok) {
+    let jsonResponse = await response.json();
+
+    if(jsonResponse.success) {
+
+      this.setState({league: jsonResponse.league});
+      // this.setState({league: jsonResponse.userData.league});
+      // TO DO NOT ALOT APART FROM ERROR AND QUEUEING IF NOT NETWORK
+    }
+  }
+} catch (error) {
+  console.log(error);
+  this.setState({message: "Error from OverOrUnder"});
+}
+
+}
 
   handleGetData () {
 
@@ -230,6 +370,8 @@ componentWillMount() {
       if(jsonResponse.userData !== null) {
 
         this.setState({myScreenName: jsonResponse.userData.screenName});
+        this.setState({isAdmin: jsonResponse.userData.admin});
+        //this.setState({league: jsonResponse.userData.league});
 
         let oldOverScore = 0;
         let oldUnderScore = 0;
@@ -258,6 +400,7 @@ componentWillMount() {
           this.setState({habits: jsonResponse.userData.habits});
           this.setState({currentHabit: habitIndex});
         }
+        this.handleGetLeague();
       } else {
         // somethig went wrong - do sign out till we fix interval
         this.handleSignOut();
@@ -272,7 +415,7 @@ componentWillMount() {
     let componentToShow = null;
     let menuButton = null;
 
-    if (thisScreen === "habitScreen" || thisScreen === "datesScreen" || thisScreen === "trendScreen" || thisScreen === "statsScreen") {
+    if (thisScreen === "habitScreen" || thisScreen === "datesScreen" || thisScreen === "trendScreen" || thisScreen === "statsScreen" || thisScreen === "league") {
       // find the habit
       let currentHabit = this.state.currentHabit;
       let habitObject = null;
@@ -372,6 +515,17 @@ componentWillMount() {
               </div>
             </div>
           );
+        } else if (thisScreen === "league") {
+          return (
+            <div>
+              <div className="headerRow">
+                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+              </div>
+              <div>
+                <LeagueBig league={this.state.league}/>
+              </div>
+            </div>
+          );
         } else {
 
           return (
@@ -379,7 +533,7 @@ componentWillMount() {
               <div className="headerRow">
 
               </div>
-              <HabitScreen habitData={habitObject} monthPc={monthPc} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton} handleMenuButton={this.handleMenuButton} handleStatsPageButton={this.handleStatsPageButton} />
+              <HabitScreen habitData={habitObject} monthPc={monthPc} league={this.state.league} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton} handleMenuButton={this.handleMenuButton} handleStatsPageButton={this.handleStatsPageButton} handleLeagueScreenButton={this.handleLeagueScreenButton} isAdmin={this.state.isAdmin}/>
             </div>
           );
         }

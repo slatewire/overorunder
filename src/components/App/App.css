@@ -558,3 +558,30 @@ td {
 .learnMore {
   margin-bottom: 60px;
 }
+
+.leagueSmall {
+  width: 100%;
+
+  # text-align: center;
+}
+
+.leagueEntry {
+  padding: 0;
+}
+
+.tableOuter {
+  margin-top: 15px;
+  margin-bottom: 100px;
+}
+
+.tableBigInner {
+  margin-top: 50px;
+}
+
+.leaguePosColourUp {
+  color: #4db6ac;
+}
+
+.leaguePosColourDown {
+  color: #ff3d00;
+}

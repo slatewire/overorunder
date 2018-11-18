@@ -5,6 +5,11 @@ import {Doughnut, HorizontalBar, Line} from 'react-chartjs-2';
 
 
 class StatsPage extends Component {
+
+  componentDidMount() {
+    window.scrollTo(0, 0)
+  }
+
   render() {
 
     let notSet = 0;
@@ -37,85 +42,68 @@ class StatsPage extends Component {
       }
 
       if (date < nowString) {
-    console.log("current date ", date);
-      // work out the streaks
-      if (thisState === "good") {
-    console.log("good");
-        if (lastState === "good" || lastState === "nothing") {
-          lastState = "good"
-    console.log("Last state good or nothing");
-          currentStreak = currentStreak + 1;
-    console.log("current streak: ", currentStreak);
+        // work out the streaks
+        if (thisState === "good") {
+          if (lastState === "good" || lastState === "nothing") {
+            lastState = "good"
+            currentStreak = currentStreak + 1;
+          } else {
+            // this means a change in streak
+            if (currentStreak > badStreak) {
+              badStreak = currentStreak;
+            }
+            if (myStreakNum === -1) {
+              myStreakNum = currentStreak;
+              if (myStreakNum === 0) {myStreakNum = 1}
+              myStreakState = "bad";
+            }
+            lastState = "good";
+            currentStreak = 1;
+          }
+
+        } else if (thisState === "bad") {
+
+          if (lastState === "bad" || lastState === "nothing") {
+            lastState = "bad"
+            currentStreak = currentStreak + 1;
+          } else {
+            // this means a change in streak
+            if (currentStreak > goodStreak) {
+              goodStreak = currentStreak;
+            }
+            if (myStreakNum === -1) {
+              myStreakNum = currentStreak;
+              if (myStreakNum === 0) {myStreakNum = 1}
+              myStreakState = "good";
+            }
+            lastState = "bad"
+            currentStreak = 1;
+          }
+
         } else {
-    console.log("change");
-          // this means a change in streak
-    console.log("current ", currentStreak, " badStreak ", badStreak)
-          if (currentStreak > badStreak) {
-    console.log("setting bad streak ", currentStreak);
-            badStreak = currentStreak;
+          if(lastState === "good"){
+            if (currentStreak > goodStreak) {
+              goodStreak = currentStreak;
+            }
+            if (myStreakNum === -1) {
+              myStreakNum = currentStreak;
+              if (myStreakNum === 0) {myStreakNum = 1}
+              myStreakState = "good";
+            }
           }
-          if (myStreakNum === -1) {
-    console.log("no Streak num set ", currentStreak);
-            myStreakNum = currentStreak;
-            if (myStreakNum === 0) {myStreakNum = 1}
-            myStreakState = "bad";
+          if(lastState === "bad"){
+            if (currentStreak > badStreak) {
+              badStreak = currentStreak;
+            }
+            if (myStreakNum === -1) {
+              myStreakNum = currentStreak;
+              if (myStreakNum === 0) {myStreakNum = 1}
+              myStreakState = "bad";
+            }
           }
-    console.log("setting streak to 1 and last state to good");
-          lastState = "good";
-          currentStreak = 1;
+          currentStreak = 0;
+          lastState = "notSet";
         }
-
-      } else if (thisState === "bad") {
-    console.log("bad");
-
-        if (lastState === "bad" || lastState === "nothing") {
-          lastState = "bad"
-    console.log("last state bad or nothing");
-          currentStreak = currentStreak + 1;
-    console.log("current streak ", currentStreak);
-        } else {
-    console.log("change in state");
-          // this means a change in streak
-    console.log("current streak ", currentStreak, " goodStreak ", goodStreak);
-          if (currentStreak > goodStreak) {
-    console.log("setting good streak ", currentStreak);
-            goodStreak = currentStreak;
-          }
-          if (myStreakNum === -1) {
-    console.log("no streak num set ", currentStreak);
-            myStreakNum = currentStreak;
-            if (myStreakNum === 0) {myStreakNum = 1}
-            myStreakState = "good";
-          }
-      console.log("current state to 1 and bad");
-          lastState = "bad"
-          currentStreak = 1;
-        }
-
-      } else {
-        if(lastState === "good"){
-          if (currentStreak > goodStreak) {
-            goodStreak = currentStreak;
-          }
-          if (myStreakNum === -1) {
-            myStreakNum = currentStreak;
-            if (myStreakNum === 0) {myStreakNum = 1}
-            myStreakState = "good";
-          }
-        }
-        if(lastState === "bad"){
-          if (currentStreak > badStreak) {
-            badStreak = currentStreak;
-          }
-          if (myStreakNum === -1) {
-            myStreakNum = currentStreak;
-            if (myStreakNum === 0) {myStreakNum = 1}
-            myStreakState = "bad";
-          }
-        }
-        currentStreak = 0;
-        lastState = "notSet";
-      }
       }
 
       // create the label/percent Array

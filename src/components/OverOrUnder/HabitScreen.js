@@ -4,12 +4,18 @@ import Trend from './Trend/Trend';
 //import StatsText from './StatsText/StatsText';
 //import DateSet from './DateSet/DateSet';
 import Percent from './Percent/Percent';
+import LeagueSmall from './League/LeagueSmall';
 import moment from 'moment'
 import '../App/App.css';
 
 // array of ProfileActivity
 
 class HabitScreen extends Component {
+
+  componentDidMount() {
+    window.scrollTo(0, 0)
+  }
+
   render() {
 
     // need to work out total as we no longer store it on server
@@ -81,6 +87,11 @@ class HabitScreen extends Component {
       scorePercentage = 100;
     }
 
+    let showLeague = null;
+    if (this.props.isAdmin) {
+      showLeague = <LeagueSmall league={this.props.league} handleLeagueScreenButton={this.props.handleLeagueScreenButton}/>
+    }
+
     return (
       <div className="signInButton">
         <XoverY over={this.props.habitData.over} under={this.props.habitData.under} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} />
@@ -90,6 +101,7 @@ class HabitScreen extends Component {
           </button>
         </div>
         <Percent habitData={this.props.habitData} over={this.props.habitData.over} under={this.props.habitData.under} total={totalDays} notSet={notSet} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} monthPc={this.props.monthPc} handleStatsPageButton={this.props.handleStatsPageButton}/>
+        {showLeague}
 
           <button className="footer" onClick={this.props.handleMenuButton}>
             <div className="progress-bar">

@@ -134,6 +134,119 @@ const randomString = length => {
   return text;
 }
 
+//const findAllUser = async function () {
+//    try {  return await User.find()
+//    } catch(err) { console.log(err) }
+//}
+
+async function thisUser(name) {
+
+console.log("Passed name ", name)
+  let document
+    try {
+      document = await User.findOne({ name: name })
+    } catch (err) {
+      logger.error('Mongo error', err)
+      return res.status(500).send()
+    }
+    return document
+}
+
+async function league(userRecord, newScore) {
+
+console.log("in league function");
+
+  const myRecord = userRecord;
+
+  let leagueTable = {};
+  let league = [];
+  let tmpLeague = [];
+  let myNewPosn = 0;
+
+  let document
+    try {
+      document = await User.find({})
+    } catch (err) {
+      logger.error('Mongo error', err)
+      return res.status(500).send()
+    }
+
+      document.forEach(function(element, index){
+        let name = "";
+        let me = false;
+        if (!element.screenName) {
+          name = element.name.substring(0,2);
+        } else {
+          name = element.screenName;
+        }
+
+        let score = 0;
+        let lastPosn = 0;
+        if (myRecord.name === element.name) {
+          score = newScore;
+          if(!myRecord.habits.league) {
+            lastPosn = 0;
+          } else {
+            if (myRecord.habits[0].league.lastPosition) {
+              lastPosn = myRecord.habits[0].league.lastPosition
+            }
+          }
+          me = true;
+        } else {
+          if (!element.habits) {
+            if (!element.habits[0].league) {
+              score = 0;
+            } else {
+              score = element.habits[0].league.score;
+              lastPosn = element.habits[0].league.lastPosition;
+            }
+          } else {
+            score = 0;
+            lastPosn = 0;
+          }
+          me = false;
+        }
+
+        tmpLeague.push({name: name, score: score, lastPosn: lastPosn, me: me});
+
+
+      });
+
+      tmpLeague.sort((a, b) => b.score - a.score);
+
+      let currentPosn = 0;
+
+      tmpLeague.forEach(function(element, index){
+
+        let newPosn = index + 1;
+
+        if (element.me) {
+          myNewPosn = newPosn;
+        }
+
+        if (element.lastPosn === newPosn || element.lastPosn === 0) {
+          league.push({pos: newPosn, name: element.name, score: element.score, move: "same", me: element.me });
+        } else if (element.lastPosn > newPosn) {
+          league.push({pos: newPosn, name: element.name, score: element.score, move: "down", me: element.me });
+        } else if (element.lastPosn < newPosn) {
+          league.push({pos: newPosn, name: element.name, score: element.score, move: "up", me: element.me });
+        } else {
+          league.push({pos: newPosn, name: element.name, score: element.score, move: "same", me: element.me });
+        }
+      });
+
+      let update = {score: newScore, lastPosition: myNewPosn};
+      let newHabits = myRecord.habits[0];
+      newHabits.league = update;
+
+      User.update({name: myRecord.name},{$set: {habits: newHabits}}, function(err, count, status) {
+        if (err) throw err;
+      });
+
+      leagueTable = {league: league, myNewPosn: myNewPosn};
+      return leagueTable;
+}
+
 // =======================
 // routes ================
 // =======================
@@ -166,7 +279,7 @@ apiRoutes.put('/forgotpass', function(req, res) {
 
       const token = randomString(40);
       const emailData = {
-        from: 'matthew.denyer@slatewire.com',
+        from: 'matthew.denyer@overorunder.io',
         to: req.body.email,
         subject: "OverOrUnder Password Reset Instructions",
         text: `Please use the following link for instructions to reset your password: https://overorunder.io/reset/${token}`,
@@ -182,8 +295,8 @@ apiRoutes.put('/forgotpass', function(req, res) {
         var transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-            user: 'matthew.denyer@slatewire.com',
-            pass: 'Mr.6wpfD00rway'
+            user: 'matthew.denyer@overorunder.io',
+            pass: 'over18181818under'
           }
         });
 
@@ -469,8 +582,34 @@ apiRoutes.get('/users', function(req, res) {
   //});
 });
 
+apiRoutes.post('/leagueTable', function(req, res) {
+
+
+  thisUser(req.decoded.user).then((myUser) =>
+    //console.log("THEN ", myUser)
+    league(myUser, req.body.score)).catch((err) => {
+      console.log("Err ", err)
+      throw err
+    })
+    .then((myLeague) =>
+      //console.log("My League", myLeague)
+      res.json({ success: true, message: 'return the league', league: myLeague.league})
+    ).catch((err) => {
+      console.log("Err ", err)
+      throw err
+    })
+
+
+
+});
 
 apiRoutes.get('/userData', function(req, res) {
+
+  User.update({name: "matthew.denyer@slatewire.com"},{$set: {admin: true}}, function(err, count, status) {
+    if (err) throw err;
+
+    //console.log("updated status");
+  });
 
     User.findOne({
       name: req.decoded.user
@@ -480,7 +619,7 @@ apiRoutes.get('/userData', function(req, res) {
 
       if (user) {
 
-        res.json({ success: true, message: 'found the user', userData: {habits: user.habits, screenName: user.screenName}});
+        res.json({ success: true, message: 'found the user', userData: {habits: user.habits, screenName: user.screenName, admin: user.admin}});
       } else {
         return res.json({ success: false, message: 'Failed to find the user.' });
       }
@@ -490,6 +629,8 @@ apiRoutes.get('/userData', function(req, res) {
 
 apiRoutes.post('/updateDateState', function(req, res) {
 
+//const myleague = league();
+
   User.findOne({
     name: req.decoded.user
   }, function(err, user) {
@@ -497,6 +638,7 @@ apiRoutes.post('/updateDateState', function(req, res) {
     if (err) throw err;//
 
     if (user) {
+
       // now have the users data block - so store a copy
       var newUser = user;
       newUser.habits.forEach(function(thisHabit) {
