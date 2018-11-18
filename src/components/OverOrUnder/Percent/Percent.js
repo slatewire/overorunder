@@ -236,7 +236,7 @@ class Percent extends Component {
 
     if (myStreakState === 'bad') {
       let diff = badStreak - myStreakNum;
-      if (diff < 7 && diff !== 0) {
+      if (diff < 3 && diff !== 0) {
         messageType = <p>close to your worst streak! tap to learn more</p>
       }
       if (diff === 0) {
@@ -246,7 +246,7 @@ class Percent extends Component {
 
     if (myStreakState === 'good') {
       let diff = goodStreak - myStreakNum;
-      if (diff < 7 && diff !== 0) {
+      if (diff < 5 && diff !== 0) {
         messageType = <p>{diff+1} for a new best streak, tap to learn more</p>
       }
       if (diff === 0) {
