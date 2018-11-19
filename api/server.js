@@ -180,6 +180,7 @@ async function league(userRecord, newScore) {
         let score = 0;
         let lastPosn = 0;
         if (myRecord.name === element.name) {
+console.log("I am: ", myRecord.name);
           score = newScore;
           if(!myRecord.habits[0].league) {
             lastPosn = 0;
@@ -190,13 +191,17 @@ async function league(userRecord, newScore) {
           }
           me = true;
         } else {
+console.log("User: ", element.name);
           if (element.habits) {
               element.habits.forEach(function(habit, index){
                 if(habit.title === "drinking") {
+console.log("Found habit");
                   if(habit.league) {
+console.log("have league");
                     if(habit.league.score) {
-                      score = element.habits[0].league.score;
-                      lastPosn = element.habits[0].league.lastPosition;
+                      score = habit.league.score;
+                      lastPosn = habit.league.lastPosition;
+console.log("score and position from stored data: ", score, " ", lastPosn);
                     }
                   }
                 }
@@ -239,6 +244,8 @@ async function league(userRecord, newScore) {
 
       User.update({name: myRecord.name},{$set: {habits: newHabits}}, function(err, count, status) {
         if (err) throw err;
+
+        console.log("stored my data: ", newHabits[0]);
       });
 
       leagueTable = {league: league, myNewPosn: myNewPosn};
