@@ -409,9 +409,10 @@ apiRoutes.post('/signup', function(req, res) {
         res.json({ success: false, message: 'User already has an account.'});
       } else if (!user) {
 
-        var startDate = new Date();
-        startDate.setDate(startDate.getDate() - 7);
-        var endDate = new Date(2019, 0, 1, 0, 0, 0, 0);
+        //var startDate = new Date();
+        //startDate.setDate(startDate.getDate() - 7);
+        var startDate = new Date(2019, 0, 1, 0, 0, 0, 0)
+        var endDate = new Date(2019, 11, 31, 0, 0, 0, 0);
 
         var theDates = [];
         //var aDate = new Date();
@@ -439,7 +440,7 @@ apiRoutes.post('/signup', function(req, res) {
         }
 
         var newHabit = {
-          title: 'drinking',
+          title: '2019',
           startDate: startDate,
           endDate: endDate,
           isDefault: true,
@@ -629,6 +630,80 @@ apiRoutes.get('/userData', function(req, res) {
         return res.json({ success: false, message: 'Failed to find the user.' });
       }
     });
+});
+
+apiRoutes.post('/resetGame', function(req, res) {
+  // post the current game Name
+
+  User.findOne({
+    name: req.decoded.user
+  }, function(err, user) {
+
+    if (err) throw err;//
+
+    if (user) {
+
+      // now have the users data block - so store a copy
+      var newUser = user;
+      newUser.habits.forEach(function(thisHabit) {
+        if (thisHabit.title === req.body.habit) {
+          thisHabit.isDefault = false;
+        }
+      });
+
+      var startDate = new Date(2019, 0, 1, 0, 0, 0, 0)
+      var endDate = new Date(2019, 11, 31, 0, 0, 0, 0);
+
+      var theDates = [];
+      //var aDate = new Date();
+      var dateString = "";
+
+      for (var d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        //var dString = d.getDate() + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear();
+        //aDate=d;
+        //aDate.setHours(0,0,0,0);
+
+        const dayOrMonth = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
+
+
+        var year = d.getFullYear();
+        var month = d.getMonth();
+        var day = d.getDate() -1;
+        dateString = year + "-" + dayOrMonth[month] + "-" + dayOrMonth[day];
+
+        var newOverUnderDate = {
+          //theDate: new Date(aDate),
+          theDate: dateString,
+          dateState: 'notSet'
+        };
+        theDates.push(newOverUnderDate);
+      }
+
+      var newHabit = {
+        title: '2019',
+        startDate: startDate,
+        endDate: endDate,
+        isDefault: true,
+        over: 0,
+        under: 0,
+        notSet: 7,
+        oldOver: 0,
+        oldUnder: 0,
+        dates: theDates
+      };
+
+      var habits = [];
+      newUser.habits.push(newHabit);
+
+      User.update({name: req.decoded.user},{$set: {habits: newUser.habits}}, function(err, count, status) {
+
+        if (err) throw err;
+
+        res.json({ success: true, message: 'user data updated'});
+
+      });
+    } // end if (user)
+  }); // find one
 });
 
 

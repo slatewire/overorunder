@@ -92,12 +92,61 @@ class HabitScreen extends Component {
       showLeague = <LeagueSmall league={this.props.league} handleLeagueScreenButton={this.props.handleLeagueScreenButton}/>
     }
 
+    let daysAgo7 = "notSet";
+    if (!this.props.habitData.dates[trendIndex+7]) {
+        daysAgo7 = "notSet";
+    } else {
+      daysAgo7 = this.props.habitData.dates[trendIndex+7].dateState;
+    }
+
+    let daysAgo6 = "notSet";
+    if (!this.props.habitData.dates[trendIndex+6]) {
+        daysAgo6 = "notSet";
+    } else {
+      daysAgo6 = this.props.habitData.dates[trendIndex+6].dateState;
+    }
+
+    let daysAgo5 = "notSet";
+    if (!this.props.habitData.dates[trendIndex+5]) {
+        daysAgo5 = "notSet";
+    } else {
+      daysAgo5 = this.props.habitData.dates[trendIndex+5].dateState;
+    }
+
+    let daysAgo4 = "notSet";
+    if (!this.props.habitData.dates[trendIndex+4]) {
+        daysAgo4 = "notSet";
+    } else {
+      daysAgo4 = this.props.habitData.dates[trendIndex+4].dateState;
+    }
+
+    let daysAgo3 = "notSet";
+    if (!this.props.habitData.dates[trendIndex+3]) {
+        daysAgo3 = "notSet";
+    } else {
+      daysAgo3 = this.props.habitData.dates[trendIndex+3].dateState;
+    }
+
+    let daysAgo2 = "notSet";
+    if (!this.props.habitData.dates[trendIndex+2]) {
+        daysAgo2 = "notSet";
+    } else {
+      daysAgo2 = this.props.habitData.dates[trendIndex+2].dateState;
+    }
+
+    let daysAgo1 = "notSet";
+    if (!this.props.habitData.dates[trendIndex+1]) {
+        daysAgo1 = "notSet";
+    } else {
+      daysAgo1 = this.props.habitData.dates[trendIndex+1].dateState;
+    }
+
     return (
       <div className="signInButton">
         <XoverY over={this.props.habitData.over} under={this.props.habitData.under} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} />
         <div>
           <button className="trendButton" onClick={this.props.handleTrendScreenButton}>
-            <Trend daysAgo7={this.props.habitData.dates[trendIndex+7].dateState} daysAgo6={this.props.habitData.dates[trendIndex+6].dateState} daysAgo5={this.props.habitData.dates[trendIndex+5].dateState} daysAgo4={this.props.habitData.dates[trendIndex+4].dateState} daysAgo3={this.props.habitData.dates[trendIndex+3].dateState} daysAgo2={this.props.habitData.dates[trendIndex+2].dateState} daysAgo1={this.props.habitData.dates[trendIndex+1].dateState} />
+            <Trend daysAgo7={daysAgo7} daysAgo6={daysAgo6} daysAgo5={daysAgo5} daysAgo4={daysAgo4} daysAgo3={daysAgo3} daysAgo2={daysAgo2} daysAgo1={daysAgo1} />
           </button>
         </div>
         <Percent habitData={this.props.habitData} over={this.props.habitData.over} under={this.props.habitData.under} total={totalDays} notSet={notSet} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} monthPc={this.props.monthPc} handleStatsPageButton={this.props.handleStatsPageButton}/>

@@ -3,6 +3,7 @@ import { Button } from 'react-materialize';
 import  HabitScreen from './HabitScreen';
 import Dashboard from '../Dashboard/Dashboard';
 import SetToday from './SetToday/SetToday';
+import SetNewYear from './SetToday/SetNewYear';
 import XoverY from './XoverY/XoverY';
 import Dates from './Dates/Dates';
 import StatsPage from './Percent/StatsPage/StatsPage'
@@ -44,6 +45,7 @@ class OverOrUnder extends Component {
     this.handleStatsPageButton = this.handleStatsPageButton.bind(this);
     this.handleLeagueScreenButton = this.handleLeagueScreenButton.bind(this);
     this.handleGetLeague = this.handleGetLeague.bind(this);
+    this.handleStartNewYear = this.handleStartNewYear.bind(this);
   }
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
@@ -135,7 +137,46 @@ class OverOrUnder extends Component {
     }
   }
 
-componentWillMount() {
+  async handleStartNewYear (habit) {
+
+    const myToken = localStorage.getItem('overUnderToken');
+
+    let url = 'http://localhost:8080/api/resetGame';
+
+    if (process.env.REACT_APP_ENV === 'dev') {
+      url = 'http://localhost:8080/api/resetGame';
+    } else if (process.env.REACT_APP_ENV === 'prod') {
+      url = 'https://api.overorunder.io/api/resetGame';
+    } else {
+      url = 'http://localhost:8080/api/resetGame';
+    }
+
+    try {
+      let response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({habit: habit}),
+        headers: {
+          "Content-type": "application/json",
+          "crossDomain": true,
+          "x-access-token": myToken
+        }
+      });
+      if (response.ok) {
+        let jsonResponse = await response.json();
+
+        if(jsonResponse.success) {
+          // get the new data
+          this.handleGetData();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      this.setState({message: "Error from OverOrUnder"});
+    }
+
+  }
+
+  componentWillMount() {
     let isAuthed = sessionStorage.getItem('isAuthed');
     if(!isAuthed) {
       const { history } = this.props
@@ -411,6 +452,8 @@ try {
 
   render() {
 
+console.log("The habit data: ", this.state.habits[this.state.currentHabit]);
+
     const thisScreen = this.state.myScreen;
     let componentToShow = null;
     let menuButton = null;
@@ -471,71 +514,87 @@ try {
 
         /////////////////////////////////////////////////////
 
-        if (setToday) {
-            // new screen for seting today
-          return (
-            <div>
-              <XoverY over={habitObject.over} under={habitObject.under} oldOver={habitObject.oldOver} oldUnder={habitObject.oldUnder} />
-              <SetToday cardDate={habitObject.dates[todayIndex]} habitName ={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
-            </div>
-          );
-            //cardDate={thisDate} habitName ={this.props.habitName}
+        // if new year do...
+        let now = moment();
+        let nowString = now.format('YYYY');
 
-//        } else if (thisScreen === "datesScreen") {
-//          return (
-//            <div>
-//              <div className="headerRow">
-//                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
-//              </div>
-//              <DateSet datesData={habitObject.dates} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
-//            </div>
-//          );
-        } else if (thisScreen === "trendScreen") {
+        if(nowString != habitObject.title) {
 
+          // it is a new year!!!
           return (
             <div>
-              <div className="headerRow">
-                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
-              </div>
-              <div>
-                <Dates datesData={habitObject.dates} habitData={habitObject} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
-              </div>
+              <SetNewYear habitName ={habitObject.title} handleStartNewYear={this.handleStartNewYear}/>
             </div>
           );
-        } else if (thisScreen === "statsScreen") {
 
-          let total = habitObject.dates.length;
-          return (
-            <div>
-              <div className="headerRow">
-                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
-              </div>
-              <div>
-                <StatsPage total={total} habitData={habitObject} monthPc={monthPc} over={habitObject.over} under={habitObject.under} oldOver={habitObject.oldOver} oldUnder={habitObject.oldUnder}/>
-              </div>
-            </div>
-          );
-        } else if (thisScreen === "league") {
-          return (
-            <div>
-              <div className="headerRow">
-                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
-              </div>
-              <div>
-                <LeagueBig league={this.state.league}/>
-              </div>
-            </div>
-          );
         } else {
 
-          return (
-            <div>
-              <div className="headerRow">
-
+          if (setToday) {
+              // new screen for seting today
+            return (
+              <div>
+                <XoverY over={habitObject.over} under={habitObject.under} oldOver={habitObject.oldOver} oldUnder={habitObject.oldUnder} />
+                <SetToday cardDate={habitObject.dates[todayIndex]} habitName ={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
               </div>
-              <HabitScreen habitData={habitObject} monthPc={monthPc} league={this.state.league} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton} handleMenuButton={this.handleMenuButton} handleStatsPageButton={this.handleStatsPageButton} handleLeagueScreenButton={this.handleLeagueScreenButton} isAdmin={this.state.isAdmin}/>
-            </div>
-          );
+            );
+              //cardDate={thisDate} habitName ={this.props.habitName}
+
+  //        } else if (thisScreen === "datesScreen") {
+  //          return (
+  //            <div>
+  //              <div className="headerRow">
+  //                <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+  //              </div>
+  //              <DateSet datesData={habitObject.dates} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
+  //            </div>
+  //          );
+          } else if (thisScreen === "trendScreen") {
+
+            return (
+              <div>
+                <div className="headerRow">
+                  <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+                </div>
+                <div>
+                  <Dates datesData={habitObject.dates} habitData={habitObject} habitName={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
+                </div>
+              </div>
+            );
+          } else if (thisScreen === "statsScreen") {
+
+            let total = habitObject.dates.length;
+            return (
+              <div>
+                <div className="headerRow">
+                  <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+                </div>
+                <div>
+                  <StatsPage total={total} habitData={habitObject} monthPc={monthPc} over={habitObject.over} under={habitObject.under} oldOver={habitObject.oldOver} oldUnder={habitObject.oldUnder}/>
+                </div>
+              </div>
+            );
+          } else if (thisScreen === "league") {
+            return (
+              <div>
+                <div className="headerRow">
+                  <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
+                </div>
+                <div>
+                  <LeagueBig league={this.state.league}/>
+                </div>
+              </div>
+            );
+          } else {
+
+            return (
+              <div>
+                <div className="headerRow">
+
+                </div>
+                <HabitScreen habitData={habitObject} monthPc={monthPc} league={this.state.league} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton} handleMenuButton={this.handleMenuButton} handleStatsPageButton={this.handleStatsPageButton} handleLeagueScreenButton={this.handleLeagueScreenButton} isAdmin={this.state.isAdmin}/>
+              </div>
+            );
+          }
         }
       }
     } else if (thisScreen === "dashboardScreen") {

@@ -139,7 +139,11 @@ class Percent extends Component {
 
     thisPercent = goodDayCount/(dayCount/100);
     lineGraphData.push(thisPercent);
-    lineGraphLabels.push(lastMonth[0]);
+    if(!lastMonth){
+      lineGraphLabels.push('J');
+    } else {
+      lineGraphLabels.push(lastMonth[0]);
+    }
 
     const daysToGo = this.props.total - (notSet + this.props.over + this.props.under);
     const toWin = Math.round(((((this.props.total + this.props.oldOver + this.props.oldUnder) - notSet)/ 2) + 0.5) - (this.props.over + this.props.oldOver));

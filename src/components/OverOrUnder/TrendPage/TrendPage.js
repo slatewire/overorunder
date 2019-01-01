@@ -53,7 +53,10 @@ class TrendPage extends Component {
       }
     });
 
-    let trendArray = this.state.habitDates.slice(trendIndex, (this.state.habitDates.length - 1));
+console.log("TREND INDEX before ", this.state.habitDates );
+
+    let trendArray = this.state.habitDates.slice(trendIndex+1, (this.state.habitDates.length));
+console.log("TREND INDEX after ", trendArray );
     let thisWeek = [{dot: String, date: {}}];
     let thisMonth = [{monthName: String, over: 0, under: 0, percent: 0, weeks: [thisWeek], active: false}]
     let fullTrend = [thisMonth];
@@ -79,31 +82,31 @@ class TrendPage extends Component {
 
       switch(day) {
         case "Mon":
-          addToLastMonth = 0;
+          addToLastMonth = 6;
           addToNewMonth = 0;
           break;
         case "Tue":
-          addToLastMonth = 6;
+          addToLastMonth = 5;
           addToNewMonth = 1;
           break;
         case "Wed":
-          addToLastMonth = 5;
+          addToLastMonth = 4;
           addToNewMonth = 2;
           break;
         case "Thu":
-          addToLastMonth = 4;
+          addToLastMonth = 3;
           addToNewMonth = 3;
           break;
         case "Fri":
-          addToLastMonth = 3;
+          addToLastMonth = 2;
           addToNewMonth = 4;
           break;
         case "Sat":
-          addToLastMonth = 2;
+          addToLastMonth = 1;
           addToNewMonth = 5;
           break;
         case "Sun":
-          addToLastMonth = 1;
+          addToLastMonth = 0;
           addToNewMonth = 6;
           break;
         default:
@@ -177,12 +180,12 @@ class TrendPage extends Component {
       thisWeek.push({dot: theState, date: element});
 
       let date2 = element.theDate;
-      let now2 = moment();
+      let now2 = moment().subtract(1, 'days');
       let nowString2 = now2.format('YYYY-MM-DD');
 
       if (date2 === nowString2) {
       // last element  in array
-        thisWeek.pop();
+        //thisWeek.pop();
         for (let i = 0; i < addToLastMonth; i++) {
           thisWeek.push({dot: "b", date: element});
         }

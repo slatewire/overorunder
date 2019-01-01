@@ -131,7 +131,13 @@ class StatsPage extends Component {
     // push the last month!
     thisPercent = goodDayCount/(dayCount/100);
     lineGraphData.push(thisPercent);
-    lineGraphLabels.push(lastMonth[0]);
+
+    //lineGraphLabels.push(lastMonth[0]);
+    if(!lastMonth){
+      lineGraphLabels.push('J');
+    } else {
+      lineGraphLabels.push(lastMonth[0]);
+    }
 
     const daysToGo = this.props.total - (notSet + this.props.over + this.props.under);
     const toWin = Math.round(((((this.props.total + this.props.oldOver + this.props.oldUnder) - notSet)/ 2) + 0.5) - (this.props.over + this.props.oldOver));
@@ -164,6 +170,7 @@ class StatsPage extends Component {
     let ninetyPc2 = 0;
     //let ninetyPcComponent = null;
     //let ninetyPcComponent2 = null;
+    let doNinety = true;
     let numberOfDays = this.props.over + this.props.under + notSet;
     if (numberOfDays >= 90) {
       for (let x=0; x<90; x++){
@@ -182,7 +189,9 @@ class StatsPage extends Component {
 //      } else {
 //        ninetyPcComponent2 = <p className="percentText"><span className="deep-orange-text text-accent-3 percent">{ninetyPc2}%</span> over the last <span className="deep-orange-text text-accent-3 percent">90 days</span></p>
 //      }
-    }
+} else {
+  doNinety = false;
+}
 
     //let thirtyPcComponent = null;
     //if (this.props.monthPc >= 50) {
@@ -270,6 +279,15 @@ class StatsPage extends Component {
     ]
   }
 
+  let ninetyComponent = null;
+  if(doNinety) {
+    ninetyComponent =
+      <div>
+        <p>last 90 days</p>
+        <Doughnut className="pie" data={nintyDaysData} />
+      </div>
+  }
+
     return (
       <div>
         <div className="signInButton">
@@ -279,8 +297,7 @@ class StatsPage extends Component {
         <Line data={lineData} />
         <p>last 30 days</p>
         <Doughnut className="pie" data={thirtyDaysData} />
-        <p>last 90 days</p>
-        <Doughnut className="pie" data={nintyDaysData} />
+        {ninetyComponent}
 
         <h3 className="teal-text text-lighten-2 percent">Streaks</h3>
         <p className="percentText"> current streak of {myStreakNum} {myStreakState} days </p>
