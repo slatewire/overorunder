@@ -518,7 +518,7 @@ console.log("The habit data: ", this.state.habits[this.state.currentHabit]);
         let now = moment();
         let nowString = now.format('YYYY');
 
-        if(nowString != habitObject.title) {
+        if(nowString !== habitObject.title) {
 
           // it is a new year!!!
           return (

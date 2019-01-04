@@ -53,10 +53,7 @@ class TrendPage extends Component {
       }
     });
 
-console.log("TREND INDEX before ", this.state.habitDates );
-
     let trendArray = this.state.habitDates.slice(trendIndex+1, (this.state.habitDates.length));
-console.log("TREND INDEX after ", trendArray );
     let thisWeek = [{dot: String, date: {}}];
     let thisMonth = [{monthName: String, over: 0, under: 0, percent: 0, weeks: [thisWeek], active: false}]
     let fullTrend = [thisMonth];
@@ -70,7 +67,6 @@ console.log("TREND INDEX after ", trendArray );
     if (trendArray.length > 14) {
       modalTrendArray = trendArray.slice((trendArray.length - 15), (trendArray.length - 1))
     }
-    modalTrendArray = modalTrendArray.reverse();
 
     trendArray.forEach(function(element, index) {
       //fullTrend = [];
@@ -126,6 +122,7 @@ console.log("TREND INDEX after ", trendArray );
         for(let x = 0; x < addToNewMonth; x++) {
           thisWeek.push({dot: "b", date: element});
         }
+        lastMonth = month;
 
       } else if (lastMonth !== month) {
 
@@ -140,7 +137,6 @@ console.log("TREND INDEX after ", trendArray );
         thisMonth.under = underCount;
         thisMonth.percent = Math.round((overCount/((overCount + underCount)/100)));
         fullTrend.push(thisMonth);
-
 
         // Start new month
         lastMonth = month;
@@ -162,7 +158,6 @@ console.log("TREND INDEX after ", trendArray );
         thisMonth.weeks.push(thisWeek);
         thisWeek = [];
       }
-
       // add today
       let theState = "n"
       switch(element.dateState) {
@@ -203,6 +198,8 @@ console.log("TREND INDEX after ", trendArray );
     });
 
     let pPercent = "pGreen";
+
+    modalTrendArray = modalTrendArray.reverse();
 
     //fullTrend.reverse();
 
