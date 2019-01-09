@@ -105,6 +105,16 @@ class Percent extends Component {
         }
       }
 
+      // HERE CHECK CURRENT STREAKS  AND IF NOTHING Set
+      if (goodStreak === 0 && badStreak === 0) {
+        myStreakState = lastState;
+        if (myStreakState === "good") {
+          goodStreak = currentStreak;
+        } else {
+          badStreak = currentStreak;
+        }
+      }
+
       let month = moment(element.theDate).format('MMM');
       if (date < nowString) {
         if (lastMonth !== month) {
@@ -128,10 +138,10 @@ class Percent extends Component {
         }
         lastMonth = month;
         if (element.dateState === 'good' || element.dateState === 'bad') {
-            dayCount = dayCount + 1;
+            dayCount = dayCount;
         }
         if (element.dateState === 'good') {
-          goodDayCount = goodDayCount +1;
+          goodDayCount = goodDayCount;
         }
       }
 

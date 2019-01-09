@@ -18,10 +18,15 @@ class HabitScreen extends Component {
 
   render() {
 
+    // We are now going to work out over and under from the data
+
+
     // need to work out total as we no longer store it on server
     var totalDays = this.props.habitData.dates.length;
 
     let notSet = 0;
+    let over = 0;
+    let under = 0;
     let trendIndex = 6;
     let now = moment();
     let nowString = now.format('YYYY-MM-DD');
@@ -41,11 +46,17 @@ class HabitScreen extends Component {
         if (element.dateState === "notSet"){
           notSet = notSet +1;
         }
+        if (element.dateState === "good"){
+          over = over +1;
+        }
+        if (element.dateState === "bad") {
+          under = under +1;
+        }
       }
 
     });
 
-    let numberSet = this.props.habitData.over + this.props.habitData.under;
+    let numberSet = over + under;
     let level = 0;
     let scorePercentage = 0;
 
@@ -143,13 +154,13 @@ class HabitScreen extends Component {
 
     return (
       <div className="signInButton">
-        <XoverY over={this.props.habitData.over} under={this.props.habitData.under} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} />
+        <XoverY over={over} under={under} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} />
         <div>
           <button className="trendButton" onClick={this.props.handleTrendScreenButton}>
             <Trend daysAgo7={daysAgo7} daysAgo6={daysAgo6} daysAgo5={daysAgo5} daysAgo4={daysAgo4} daysAgo3={daysAgo3} daysAgo2={daysAgo2} daysAgo1={daysAgo1} />
           </button>
         </div>
-        <Percent habitData={this.props.habitData} over={this.props.habitData.over} under={this.props.habitData.under} total={totalDays} notSet={notSet} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} monthPc={this.props.monthPc} handleStatsPageButton={this.props.handleStatsPageButton}/>
+        <Percent habitData={this.props.habitData} over={over} under={under} total={totalDays} notSet={notSet} oldOver={this.props.habitData.oldOver} oldUnder={this.props.habitData.oldUnder} monthPc={this.props.monthPc} handleStatsPageButton={this.props.handleStatsPageButton}/>
         {showLeague}
 
           <button className="footer" onClick={this.props.handleMenuButton}>

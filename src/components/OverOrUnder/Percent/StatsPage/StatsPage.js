@@ -17,8 +17,9 @@ class StatsPage extends Component {
     let badStreak = 0;
     let currentStreak = 0;
     let myStreakNum = -1;
+    let newMyStreakNum = 0;
     let myStreakState = "nothing";
-    let lastState = 'nothing';
+    let lastState = "nothing";
     let now = moment();
     let nowString = now.format('YYYY-MM-DD');
     let lineGraphData = [];
@@ -27,6 +28,8 @@ class StatsPage extends Component {
     let dayCount = 0;
     let goodDayCount = 0;
     let thisPercent = 0;
+    let firstStreak = true;
+    let firstStreakState = "not set";
     // have to work out array indexs for the 7 dates
     // at the same time lets do not set count
     this.props.habitData.dates.forEach(function(element, index){
@@ -38,6 +41,20 @@ class StatsPage extends Component {
       if (date < nowString) {
         if (element.dateState === "notSet"){
           notSet = notSet +1;
+        }
+      }
+
+      // firt streak is current streak, work out separatly
+      if (date < nowString) {
+        if (firstStreak) {
+          if(lastState === "nothing") {
+            firstStreakState = thisState;
+            newMyStreakNum = newMyStreakNum +1;
+          } else if(firstStreakState === thisState) {
+            newMyStreakNum = newMyStreakNum +1;
+          } else {
+              firstStreak = false;
+          }
         }
       }
 
@@ -103,6 +120,40 @@ class StatsPage extends Component {
           }
           currentStreak = 0;
           lastState = "notSet";
+        }
+      }
+
+      // HERE CHECK CURRENT STREAKS  AND IF NOTHING Set
+//      if (goodStreak === 0 && badStreak === 0) {
+//        myStreakState = lastState;
+//        if (myStreakState === "good") {
+//          goodStreak = currentStreak;
+//          myStreakNum = currentStreak;
+//        } else {
+//          badStreak = currentStreak;
+//          myStreakNum = currentStreak;
+//        }
+//      }
+
+      if(lastState === "bad"){
+        if (currentStreak > badStreak) {
+          badStreak = currentStreak + 1;
+        }
+        if (myStreakNum === -1) {
+          myStreakNum = currentStreak;
+          if (myStreakNum === 0) {myStreakNum = 1}
+          myStreakState = "bad";
+        }
+      }
+
+      if(lastState === "good"){
+        if (currentStreak > goodStreak) {
+          goodStreak = currentStreak;
+        }
+        if (myStreakNum === -1) {
+          myStreakNum = currentStreak;
+          if (myStreakNum === 0) {myStreakNum = 1}
+          myStreakState = "good";
         }
       }
 
@@ -300,7 +351,7 @@ class StatsPage extends Component {
         {ninetyComponent}
 
         <h3 className="teal-text text-lighten-2 percent">Streaks</h3>
-        <p className="percentText"> current streak of {myStreakNum} {myStreakState} days </p>
+        <p className="percentText"> current streak of {newMyStreakNum} {firstStreakState} days </p>
         <HorizontalBar className="pie" data={streakData} />
         <h3 className="teal-text text-lighten-2 percent">Win or Lose</h3>
         <p className="percentText">{daysToGo} days to go</p>
