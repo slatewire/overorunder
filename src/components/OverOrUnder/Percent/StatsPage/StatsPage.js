@@ -13,6 +13,8 @@ class StatsPage extends Component {
   render() {
 
     let notSet = 0;
+    let over = 0;
+    let under = 0;
     let goodStreak = 0;
     let badStreak = 0;
     let currentStreak = 0;
@@ -41,6 +43,12 @@ class StatsPage extends Component {
       if (date < nowString) {
         if (element.dateState === "notSet"){
           notSet = notSet +1;
+        }
+        if (element.dateState === "good"){
+          over = over +1;
+        }
+        if (element.dateState === "bad") {
+          under = under +1;
         }
       }
 
@@ -342,7 +350,7 @@ class StatsPage extends Component {
     return (
       <div>
         <div className="signInButton">
-          <XoverY over={this.props.over} under={this.props.under} oldOver={this.props.oldOver} oldUnder={this.props.oldUnder}  />
+          <XoverY over={over} under={under} oldOver={this.props.oldOver} oldUnder={this.props.oldUnder}  />
         </div>
         <h3 className="teal-text text-lighten-2 percent">Trends</h3>
         <Line data={lineData} />

@@ -475,6 +475,8 @@ console.log("The habit data: ", this.state.habits[this.state.currentHabit]);
         ////////////////////////////////////////////////////
         let setToday = false;
         let todayIndex = 0;
+        let over = 0;
+        let under = 0;
         habitObject.dates.forEach(function(element, index){
 
           let date = element.theDate;
@@ -484,6 +486,16 @@ console.log("The habit data: ", this.state.habits[this.state.currentHabit]);
           if (date === nowString) {
             todayIndex = index;
           }
+
+          if (date < nowString) {
+            if (element.dateState === "good"){
+              over = over +1;
+            }
+            if (element.dateState === "bad") {
+              under = under +1;
+            }
+          }
+
         });
 
         if (habitObject.dates[todayIndex].dateState === "notSet") {
@@ -533,7 +545,7 @@ console.log("The habit data: ", this.state.habits[this.state.currentHabit]);
               // new screen for seting today
             return (
               <div>
-                <XoverY over={habitObject.over} under={habitObject.under} oldOver={habitObject.oldOver} oldUnder={habitObject.oldUnder} />
+                <XoverY over={over} under={under} oldOver={habitObject.oldOver} oldUnder={habitObject.oldUnder} />
                 <SetToday cardDate={habitObject.dates[todayIndex]} habitName ={habitObject.title} handleHabitDateUpdate={this.handleHabitDateUpdate}/>
               </div>
             );
