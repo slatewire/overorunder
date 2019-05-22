@@ -34,6 +34,10 @@ class StatsPage extends Component {
     let firstStreakState = "not set";
     // have to work out array indexs for the 7 dates
     // at the same time lets do not set count
+
+    let count90 = 0;
+    let good90 = 0;
+    let bad90 = 0;
     this.props.habitData.dates.forEach(function(element, index){
 
       let date = element.theDate;
@@ -46,10 +50,17 @@ class StatsPage extends Component {
         }
         if (element.dateState === "good"){
           over = over +1;
+          if(count90 < 90) {
+            good90 = good90+1;
+          }
         }
         if (element.dateState === "bad") {
           under = under +1;
+          if(count90 < 90) {
+            bad90 = bad90+1;
+          }
         }
+        count90 = count90 +1;
       }
 
       // firt streak is current streak, work out separatly
@@ -229,26 +240,36 @@ class StatsPage extends Component {
     let ninetyPc2 = 0;
     //let ninetyPcComponent = null;
     //let ninetyPcComponent2 = null;
+
+
+
     let doNinety = true;
     let numberOfDays = this.props.over + this.props.under + notSet;
     if (numberOfDays >= 90) {
-      for (let x=0; x<90; x++){
+      let x = 0
+      for (x=0; x<90; x++){
+console.log("IN WORK OUT 90");
         let thisState = this.props.habitData.dates[x].dateState;
+console.log("the data ", this.props.habitData.dates[x]);
         if(thisState === 'good' ) {
+console.log("GOOD");
           overNinety = overNinety+1;
         } else if (thisState === 'bad') {
+console.log("BAD");
           underNinety = underNinety+1;
         }
       }
       //ninetyPc = Math.round(overNinety * 0.9);
-      ninetyPc2 = Math.round(overNinety / ((overNinety+underNinety) /100));
-
+//      ninetyPc2 = Math.round(overNinety / ((overNinety+underNinety) /100));
+      ninetyPc2 = Math.round(good90 / ((good90+bad90) /100));
+console.log("90 PC ", overNinety, " ", underNinety, " ", ninetyPc2);
   //    if(ninetyPc2 >= 50) {
 //        ninetyPcComponent2 = <p className="percentText"><span className="teal-text text-lighten-2 percent">{ninetyPc2}%</span> over the last <span className="teal-text text-lighten-2 percent">90 days</span></p>
 //      } else {
 //        ninetyPcComponent2 = <p className="percentText"><span className="deep-orange-text text-accent-3 percent">{ninetyPc2}%</span> over the last <span className="deep-orange-text text-accent-3 percent">90 days</span></p>
 //      }
 } else {
+console.log("90 FALSE");
   doNinety = false;
 }
 

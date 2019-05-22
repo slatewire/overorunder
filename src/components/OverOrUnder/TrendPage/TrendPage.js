@@ -65,7 +65,7 @@ class TrendPage extends Component {
 
     let modalTrendArray = trendArray;
     if (trendArray.length > 14) {
-      modalTrendArray = trendArray.slice((trendArray.length - 15), (trendArray.length - 1))
+      modalTrendArray = trendArray.slice((trendArray.length - 14), (trendArray.length))
     }
 
     trendArray.forEach(function(element, index) {
@@ -78,7 +78,7 @@ class TrendPage extends Component {
 
       switch(day) {
         case "Mon":
-          addToLastMonth = 6;
+          addToLastMonth = 0;
           addToNewMonth = 0;
           break;
         case "Tue":
