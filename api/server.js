@@ -190,7 +190,7 @@ async function league(userRecord, newScore) {
     // loop through current habit and calc data
     if (element.habits) {
         element.habits.forEach(function(habit, index){
-          if(habit.title === "drinking") {
+          if(habit.title === "2019") {
 
             // CALC THE score
             let notSet = 0;
