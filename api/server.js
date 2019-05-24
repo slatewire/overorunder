@@ -12,6 +12,7 @@ var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
 var argv = require( 'argv' );
 var nodemailer = require('nodemailer');
+var moment = require('moment');
 
 // get our mongoose model
 var User   = require('./app/models/user');
@@ -153,13 +154,13 @@ async function thisUser(name) {
 
 async function league(userRecord, newScore) {
 
+/////////////////////////////////////////////////
   const myRecord = userRecord;
-
   let leagueTable = {};
   let league = [];
   let tmpLeague = [];
-  let myNewPosn = 0;
 
+  // get all users
   let document
     try {
       document = await User.find({})
@@ -168,88 +169,254 @@ async function league(userRecord, newScore) {
       return res.status(500).send()
     }
 
-      document.forEach(function(element, index){
-        let name = "";
-        let me = false;
-        if (!element.screenName) {
-          name = element.name.substring(0,2);
-        } else {
-          name = element.screenName;
-        }
+  // loop through each user
+  document.forEach(function(element, index){
 
-        let score = 0;
-        let lastPosn = 0;
-        if (myRecord.name === element.name) {
-console.log("I am: ", myRecord.name);
-          score = newScore;
-          if(!myRecord.habits[0].league) {
-            lastPosn = 0;
-          } else {
-            if (myRecord.habits[0].league.lastPosition) {
-              lastPosn = myRecord.habits[0].league.lastPosition
-            }
-          }
-          me = true;
-        } else {
-console.log("User: ", element.name);
-          if (element.habits) {
-              element.habits.forEach(function(habit, index){
-                if(habit.title === "drinking") {
-console.log("Found habit");
-                  if(habit.league) {
-console.log("have league");
-                    if(habit.league.score) {
-                      score = habit.league.score;
-                      lastPosn = habit.league.lastPosition;
-console.log("score and position from stored data: ", score, " ", lastPosn);
-                    }
-                  }
+    // get or create a screen name - assume it is not me
+    let score = 0;
+    let name = "";
+    let me = false;
+    let userPlaying = false;
+    if (!element.screenName) {
+      name = element.name.substring(0,2);
+    } else {
+      name = element.screenName;
+    }
+
+    if (myRecord.name === element.name) {
+      me = true;
+    }
+
+    // loop through current habit and calc data
+    if (element.habits) {
+        element.habits.forEach(function(habit, index){
+          if(habit.title === "drinking") {
+
+            // CALC THE score
+            let notSet = 0;
+            let over = 0;
+            let under = 0;
+            let goodStreak = 0;
+            let badStreak = 0;
+            let now = moment();
+            let nowString = now.format('YYYY-MM-DD');
+
+            // loop through each date in the habit
+            let thisStreak = 0;
+            let lastState = "notSet";
+            let started = false;
+
+            habit.dates.forEach(function(date, index) {
+
+              // calc from first logged day
+              if (!started) {
+                if (date.dateState != "notSet") {
+                  userPlaying = true;
+                  started = true;
                 }
-              });
+              }
+
+              // is the date part of the current score
+              if ((started) && (date.theDate < nowString)) {
+
+                if(date.dateState === "good") {
+                  over = over + 1;
+                  if (lastState != "good") {
+                    // new streak
+                    if(lastState === "bad") {
+                      // need to see if new bad streak record
+                      if(thisStreak > badStreak) {
+                        badStreak = thisStreak;
+                      }
+                    }
+                    lastState = "good";
+                    thisStreak = 1;
+                  } else {
+                    thisStreak = thisStreak + 1;
+                  }
+                } else if (date.dateState === "bad") {
+                  under = under + 1;
+                  if (lastState != "bad") {
+                    // new streak
+                    if(lastState === "good") {
+                      // need to see if new bad streak record
+                      if(thisStreak > goodStreak) {
+                        goodStreak = thisStreak;
+                      }
+                    }
+                    lastState = "bad";
+                    thisStreak = 1;
+                  } else {
+                    thisStreak = thisStreak + 1;
+                  }
+
+                } else {
+                  // not set
+                  notSet = notSet + 1;
+                  lastState = "notSet";
+                }
+
+              }
+            }); // end dates loop
+
+            // we can now calculate the score
+            let numberSet = over + under;
+            if (numberSet <= 7) {
+              level = 1;
+            } else if (numberSet <= 14 && numberSet > 7) {
+              level = 1.15;
+            } else if (numberSet <=30 && numberSet > 14) {
+              level = 1.33;
+            } else if (numberSet <=45 && numberSet > 30) {
+              level = 1.38;
+            } else if (numberSet <= 60 && numberSet > 45) {
+              level = 1.44;
+            } else if (numberSet <= 90 && numberSet > 60) {
+              level = 1.46;
+            } else if (numberSet <= 120 && numberSet > 90) {
+              level = 1.48;
+            } else if (numberSet <= 150 && numberSet > 120) {
+              level = 1.49;
+            } else if (numberSet <= 183 && numberSet > 150) {
+              level = 1.5;
+            } else if (numberSet <= 240 && numberSet > 183) {
+              level = 1.52;
+            } else if (numberSet <= 300 && numberSet > 240) {
+              level = 1.54;
+            } else {
+              level = 1.55;
             }
-          me = false;
-        }
 
-        tmpLeague.push({name: name, score: score, lastPosn: lastPosn, me: me});
+            if(over === 0) {
+              score = 0;
+            } else {
+              score = Math.round((((100 / (numberSet+(notSet*1.5)))*over)*level)*100);
+              let streakBonus = goodStreak - badStreak;
+              score = score + streakBonus;
+            }
+          } // end habit
+        });// end loop through habits
+      } // end if habit model check
+
+      // push user entry into league
+      if (userPlaying) {
+        tmpLeague.push({name: name, score: score, lastPosn: 0, me: me});
+      }
+      userPlaying = false;
+  }); // end loop through each user
+
+  let currentPosn = 0;
+  tmpLeague.sort((a, b) => b.score - a.score);
+
+  tmpLeague.forEach(function(element, index){
+
+    let newPosn = index + 1;
+    if (element.me) {
+      myNewPosn = newPosn;
+    }
+
+    league.push({pos: newPosn, name: element.name, score: element.score, move: "same", me: element.me });
+  });
+
+  leagueTable = {league: league, myNewPosn: myNewPosn};
+  return leagueTable;
 
 
-      });
 
-      tmpLeague.sort((a, b) => b.score - a.score);
-
-      let currentPosn = 0;
-
-      tmpLeague.forEach(function(element, index){
-
-        let newPosn = index + 1;
-
-        if (element.me) {
-          myNewPosn = newPosn;
-        }
-
-        if (element.lastPosn === newPosn || element.lastPosn === 0) {
-          league.push({pos: newPosn, name: element.name, score: element.score, move: "same", me: element.me });
-        } else if (element.lastPosn > newPosn) {
-          league.push({pos: newPosn, name: element.name, score: element.score, move: "down", me: element.me });
-        } else if (element.lastPosn < newPosn) {
-          league.push({pos: newPosn, name: element.name, score: element.score, move: "up", me: element.me });
-        } else {
-          league.push({pos: newPosn, name: element.name, score: element.score, move: "same", me: element.me });
-        }
-      });
-
-      let update = {score: newScore, lastPosition: myNewPosn};
-      let newHabits = myRecord.habits;
-      newHabits[0].league = update;
-
-      User.update({name: myRecord.name},{$set: {habits: newHabits}}, function(err, count, status) {
-        if (err) throw err;
-
-        console.log("stored my data: ", newHabits[0]);
-      });
-
-      leagueTable = {league: league, myNewPosn: myNewPosn};
-      return leagueTable;
+///////////////////////////////////////////////////
+//  const myRecord = userRecord;
+//
+//  let leagueTable = {};
+//  let league = [];
+//  let tmpLeague = [];
+//  let myNewPosn = 0;
+//
+//  let document
+//    try {
+//      document = await User.find({})
+//    } catch (err) {
+//      logger.error('Mongo error', err)
+//      return res.status(500).send()
+//    }
+//
+//      document.forEach(function(element, index){
+//        let name = "";
+//        let me = false;
+//        if (!element.screenName) {
+//         name = element.name.substring(0,2);
+//        } else {
+//          name = element.screenName;
+//        }
+//
+//        let score = 0;
+//        let lastPosn = 0;
+//        if (myRecord.name === element.name) {
+//          score = newScore;
+//          if(!myRecord.habits[0].league) {
+//            lastPosn = 0;
+//          } else {
+//            if (myRecord.habits[0].league.lastPosition) {
+//              lastPosn = myRecord.habits[0].league.lastPosition
+//            }
+//          }
+//          me = true;
+//        } else {
+//          if (element.habits) {
+//              element.habits.forEach(function(habit, index){
+//                if(habit.title === "drinking") {
+//
+//                  if(habit.league) {
+//
+//                    if(habit.league.score) {
+//                      score = habit.league.score;
+//                      lastPosn = habit.league.lastPosition;
+//
+//                    }
+//                  }
+//                }
+//              });
+//            }
+//          me = false;
+//        }
+//
+//        tmpLeague.push({name: name, score: score, lastPosn: lastPosn, me: me});
+//
+//
+//      });
+//
+//      tmpLeague.sort((a, b) => b.score - a.score);
+//
+//      let currentPosn = 0;
+//
+//      tmpLeague.forEach(function(element, index){
+//
+//        let newPosn = index + 1;
+//
+//        if (element.me) {
+//          myNewPosn = newPosn;
+//        }
+//
+//        if (element.lastPosn === newPosn || element.lastPosn === 0) {
+//          league.push({pos: newPosn, name: element.name, score: element.score, move: "same", me: element.me });
+//        } else if (element.lastPosn > newPosn) {
+//          league.push({pos: newPosn, name: element.name, score: element.score, move: "down", me: element.me });
+//        } else if (element.lastPosn < newPosn) {
+//          league.push({pos: newPosn, name: element.name, score: element.score, move: "up", me: element.me });
+//        } else {
+//          league.push({pos: newPosn, name: element.name, score: element.score, move: "same", me: element.me });
+//        }
+//      });
+//
+//      let update = {score: newScore, lastPosition: myNewPosn};
+//      let newHabits = myRecord.habits;
+//      newHabits[0].league = update;
+//
+//      User.update({name: myRecord.name},{$set: {habits: newHabits}}, function(err, count, status) {
+//        if (err) throw err;
+//      });
+//
+//      leagueTable = {league: league, myNewPosn: myNewPosn};
+//      return leagueTable;
 }
 
 // =======================
