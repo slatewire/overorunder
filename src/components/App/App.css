@@ -39,6 +39,7 @@
 
 .headerRow {
    padding: 16px 0px;
+   padding-left: 14px;
   # background-color: #FFF8F0;
    position: fixed;
    top: 0;
@@ -584,4 +585,9 @@ td {
 
 .leaguePosColourDown {
   color: #ff3d00;
+}
+
+.graphs_box {
+  padding-left: 14px;
+  padding-right: 14px;
 }

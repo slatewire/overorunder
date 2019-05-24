@@ -373,18 +373,20 @@ console.log("90 FALSE");
         <div className="signInButton">
           <XoverY over={over} under={under} oldOver={this.props.oldOver} oldUnder={this.props.oldUnder}  />
         </div>
-        <h3 className="teal-text text-lighten-2 percent">Trends</h3>
-        <Line data={lineData} />
-        <p>last 30 days</p>
-        <Doughnut className="pie" data={thirtyDaysData} />
-        {ninetyComponent}
+        <div className="graphs_box">
+          <h3 className="teal-text text-lighten-2 percent">Trends</h3>
+          <Line data={lineData} />
+          <p>last 30 days</p>
+          <Doughnut className="pie" data={thirtyDaysData} />
+          {ninetyComponent}
 
-        <h3 className="teal-text text-lighten-2 percent">Streaks</h3>
-        <p className="percentText"> current streak of {newMyStreakNum} {firstStreakState} days </p>
-        <HorizontalBar className="pie" data={streakData} />
-        <h3 className="teal-text text-lighten-2 percent">Win or Lose</h3>
-        <p className="percentText">{daysToGo} days to go</p>
-        <HorizontalBar className="pie" data={winLoseData} />
+          <h3 className="teal-text text-lighten-2 percent">Streaks</h3>
+          <p className="percentText"> current streak of {newMyStreakNum} {firstStreakState} days </p>
+          <HorizontalBar className="pie" data={streakData} />
+          <h3 className="teal-text text-lighten-2 percent">Win or Lose</h3>
+          <p className="percentText">{daysToGo} days to go</p>
+          <HorizontalBar className="pie" data={winLoseData} />
+        </div>
       </div>
     );
   }
