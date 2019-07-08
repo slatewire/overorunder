@@ -21,6 +21,7 @@ class OverOrUnder extends Component {
     this.state = {
       myScreen: 'habitScreen',
       myScreenName: "",
+      leagueSwitch: true,
       habits: [],
       currentHabit: -1,
       myToken: '',
@@ -46,6 +47,7 @@ class OverOrUnder extends Component {
     this.handleLeagueScreenButton = this.handleLeagueScreenButton.bind(this);
     this.handleGetLeague = this.handleGetLeague.bind(this);
     this.handleStartNewYear = this.handleStartNewYear.bind(this);
+    this.handleUpdateLeagueSwitch = this.handleUpdateLeagueSwitch.bind(this);
   }
 
   async handleHabitDateUpdate (habit, date, oldState, newState) {
@@ -240,6 +242,10 @@ class OverOrUnder extends Component {
     this.setState({myScreen: newMyScreen});
   }
 
+  handleUpdateLeagueSwitch (update) {
+    this.setState({leagueSwitch: update});
+  }
+
   handleSetScreenName (newScreenName) {
     this.setState({myScreenName: newScreenName});
   }
@@ -410,7 +416,9 @@ try {
 
       if(jsonResponse.userData !== null) {
 
+console.log("USER DATA: ", jsonResponse.userData);
         this.setState({myScreenName: jsonResponse.userData.screenName});
+        this.setState({leagueSwitch: jsonResponse.userData.leagueSwitch});
         this.setState({isAdmin: jsonResponse.userData.admin});
         //this.setState({league: jsonResponse.userData.league});
 
@@ -603,7 +611,7 @@ console.log("The habit data: ", this.state.habits[this.state.currentHabit]);
                 <div className="headerRow">
 
                 </div>
-                <HabitScreen habitData={habitObject} monthPc={monthPc} league={this.state.league} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton} handleMenuButton={this.handleMenuButton} handleStatsPageButton={this.handleStatsPageButton} handleLeagueScreenButton={this.handleLeagueScreenButton} isAdmin={this.state.isAdmin}/>
+                <HabitScreen habitData={habitObject} monthPc={monthPc} league={this.state.league} leagueSwitch={this.state.leagueSwitch} handleHabitDateUpdate={this.handleHabitDateUpdate} handleTrendScreenButton={this.handleTrendScreenButton} handleMenuButton={this.handleMenuButton} handleStatsPageButton={this.handleStatsPageButton} handleLeagueScreenButton={this.handleLeagueScreenButton} isAdmin={this.state.isAdmin}/>
               </div>
             );
           }
@@ -616,7 +624,7 @@ console.log("The habit data: ", this.state.habits[this.state.currentHabit]);
           <div className="headerRow">
             <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
           </div>
-          <Dashboard handleSignOut={this.handleSignOut} myScreenName={this.state.myScreenName} handleSetScreenName={this.handleSetScreenName} handleSetMyScreen={this.handleSetMyScreen} oldOver={this.state.oldOver} oldUnder={this.state.oldUnder} handleSetOldOver={this.handleSetOldOver} handleSetOldUnder={this.handleSetOldUnder}/>
+          <Dashboard handleSignOut={this.handleSignOut} myScreenName={this.state.myScreenName} leagueSwitch={this.state.leagueSwitch} handleSetScreenName={this.handleSetScreenName} handleSetMyScreen={this.handleSetMyScreen} handleUpdateLeagueSwitch={this.handleUpdateLeagueSwitch} oldOver={this.state.oldOver} oldUnder={this.state.oldUnder} handleSetOldOver={this.handleSetOldOver} handleSetOldUnder={this.handleSetOldUnder}/>
         </div>
       );
     }

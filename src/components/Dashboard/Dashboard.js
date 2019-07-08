@@ -54,7 +54,7 @@ class Dashboard extends Component {
         componentToShow = <Games oldOver={this.props.oldOver} oldUnder={this.props.oldUnder} handleSetOldOver={this.props.handleSetOldOver} handleSetOldUnder={this.props.handleSetOldUnder}/>
         break;
       case "settings":
-        componentToShow = <Settings handleSignOut={this.props.handleSignOut} myScreenName={this.props.myScreenName} handleSetScreenName={this.props.handleSetScreenName} handleSetMyScreen={this.props.handleSetMyScreen}/>
+        componentToShow = <Settings handleSignOut={this.props.handleSignOut} myScreenName={this.props.myScreenName} leagueSwitch={this.props.leagueSwitch} handleSetScreenName={this.props.handleSetScreenName} handleSetMyScreen={this.props.handleSetMyScreen} handleUpdateLeagueSwitch={this.props.handleUpdateLeagueSwitch}/>
         break;
       default:
         console.log("default");

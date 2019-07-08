@@ -176,7 +176,13 @@ async function league(userRecord, newScore) {
     let score = 0;
     let name = "";
     let me = false;
+    let selectedPlaying = "";
     let userPlaying = false;
+    if (!element.leagueSwitch) {
+      selectedPlaying = "true";
+    } else {
+      selectedPlaying = element.leagueSwitch;
+    }
     if (!element.screenName) {
       name = element.name.substring(0,2);
     } else {
@@ -300,7 +306,9 @@ async function league(userRecord, newScore) {
 
       // push user entry into league
       if (userPlaying) {
-        tmpLeague.push({name: name, score: score, lastPosn: 0, me: me});
+        if (selectedPlaying === "true") {
+          tmpLeague.push({name: name, score: score, lastPosn: 0, me: me});
+        }
       }
       userPlaying = false;
   }); // end loop through each user
@@ -792,7 +800,7 @@ apiRoutes.get('/userData', function(req, res) {
 
       if (user) {
 
-        res.json({ success: true, message: 'found the user', userData: {habits: user.habits, screenName: user.screenName, admin: user.admin}});
+        res.json({ success: true, message: 'found the user', userData: {habits: user.habits, screenName: user.screenName, leagueSwitch: user.leagueSwitch, admin: user.admin}});
       } else {
         return res.json({ success: false, message: 'Failed to find the user.' });
       }
@@ -957,6 +965,28 @@ apiRoutes.post('/updateScreenName', function(req, res) {
         if (err) throw err;
 
         res.json({ success: true, message: 'screenName updated'});
+
+      });
+    }
+  });
+});
+
+apiRoutes.post('/updateLeagueSwitch', function(req, res) {
+
+  User.findOne({
+    name: req.decoded.user
+  }, function(err, user) {
+
+    if (err) throw err;//
+
+    if (user) {
+
+console.log(req.body.leagueSwitch);
+      User.update({name: req.decoded.user},{$set: {leagueSwitch: req.body.leagueSwitch}}, function(err, count, status) {
+
+        if (err) throw err;
+
+        res.json({ success: true, message: 'leagueSwitch updated'});
 
       });
     }

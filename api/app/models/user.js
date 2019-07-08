@@ -7,6 +7,7 @@ var SALT_WORK_FACTOR = 10;
 var User = new Schema({
     name: { type: String, required: true, index: { unique: true } },
     screenName: {type: String},
+    leagueSwitch: {type: String, default: true},
     password: { type: String, required: true },
     resetPassLink: {type: String},
     admin : { type: Boolean, default: false},

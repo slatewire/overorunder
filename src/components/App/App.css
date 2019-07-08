@@ -591,3 +591,8 @@ td {
   padding-left: 14px;
   padding-right: 14px;
 }
+
+.leagueSettings {
+  text-align: center;
+  margin-top: 55px;
+}

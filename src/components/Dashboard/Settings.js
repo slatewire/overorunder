@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ScreenName from './ScreenName';
+import LeagueSwitch from './LeagueSwitch';
 import Exit from './Exit';
 import '../App/App.css';
 
@@ -24,6 +25,7 @@ class Settings extends Component {
     return (
       <div className="screenNameLabel">
         <ScreenName myScreenName={this.props.myScreenName} handleSetScreenName={this.props.handleSetScreenName} />
+        <LeagueSwitch leagueSwitch={this.props.leagueSwitch} handleUpdateLeagueSwitch={this.props.handleUpdateLeagueSwitch} />
         <div className="signOutDiv">
           <Exit handleSignOut={this.props.handleSignOut}/>
         </div>

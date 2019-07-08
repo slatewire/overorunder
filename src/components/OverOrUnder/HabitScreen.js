@@ -99,9 +99,9 @@ class HabitScreen extends Component {
     }
 
     let showLeague = null;
-  //  if (this.props.isAdmin) {
+    if (this.props.leagueSwitch === "true") {
       showLeague = <LeagueSmall league={this.props.league} handleLeagueScreenButton={this.props.handleLeagueScreenButton}/>
-  //  }
+    }
 
     let daysAgo7 = "notSet";
     if (!this.props.habitData.dates[trendIndex+7]) {
