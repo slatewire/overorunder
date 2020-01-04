@@ -541,7 +541,7 @@ console.log("The habit data: ", this.state.habits[this.state.currentHabit]);
         if(nowString !== habitObject.title) {
 
           // it is a new year!!!
-          return (
+         return (
             <div>
               <SetNewYear habitName ={habitObject.title} handleStartNewYear={this.handleStartNewYear}/>
             </div>
@@ -624,7 +624,7 @@ console.log("The habit data: ", this.state.habits[this.state.currentHabit]);
           <div className="headerRow">
             <Button floating  className='teal lighten-2' waves='light' icon='arrow_back' onClick={this.handleMenuButton} />
           </div>
-          <Dashboard handleSignOut={this.handleSignOut} myScreenName={this.state.myScreenName} leagueSwitch={this.state.leagueSwitch} handleSetScreenName={this.handleSetScreenName} handleSetMyScreen={this.handleSetMyScreen} handleUpdateLeagueSwitch={this.handleUpdateLeagueSwitch} oldOver={this.state.oldOver} oldUnder={this.state.oldUnder} handleSetOldOver={this.handleSetOldOver} handleSetOldUnder={this.handleSetOldUnder}/>
+          <Dashboard handleSignOut={this.handleSignOut} myScreenName={this.state.myScreenName} leagueSwitch={this.state.leagueSwitch} handleSetScreenName={this.handleSetScreenName} handleSetMyScreen={this.handleSetMyScreen} handleUpdateLeagueSwitch={this.handleUpdateLeagueSwitch} oldOver={this.state.oldOver} oldUnder={this.state.oldUnder} handleSetOldOver={this.handleSetOldOver} handleSetOldUnder={this.handleSetOldUnder} isAdmin={this.state.isAdmin}/>
         </div>
       );
     }

@@ -15,6 +15,11 @@
   text-align: center;
 }
 
+.emailButton {
+  text-align: center;
+  margin-top: 16px;
+}
+
 .FormFields {
   margin-top: 0px;
   margin-left: 0px;

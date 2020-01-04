@@ -152,6 +152,52 @@ async function thisUser(name) {
     return document
 }
 
+async function sendEmailAll(subject, text) {
+
+  const emailData = {
+    from: 'matthew.denyer@overorunder.io',
+    subject: subject,
+    text: `${text}: https://overorunder.io`,
+    html: `<p>hi there,<p>${text} </p><p>change your life by playing over or under at https://overorunder.io</p>`
+  };
+
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    pool: true,
+    auth: {
+      user: 'matthew.denyer@overorunder.io',
+      pass: 'over18181818under'
+    }
+  });
+
+  let document
+    try {
+      document = await User.find({})
+    } catch (err) {
+      logger.error('Mongo error', err)
+      return res.status(500).send()
+    }
+
+  // loop through each user
+  document.forEach(async function(element, index){
+    console.log("Loop element: ", element.name);
+    emailData.to = element.name;
+
+    await transporter.sendMail(emailData, function(error, info){
+      if (error) {
+        console.log("error: ", element.name);
+        console.log(error);
+        //return res.status(200).json({success: false, message: 'Problem sending email'});
+      } else {
+        console.log("ok: ", element.name);
+        //return res.status(200).json({success: true, message: 'Email sent.'});
+      }
+    });
+
+  });
+
+}
+
 async function league(userRecord, newScore) {
 
 /////////////////////////////////////////////////
@@ -196,7 +242,7 @@ async function league(userRecord, newScore) {
     // loop through current habit and calc data
     if (element.habits) {
         element.habits.forEach(function(habit, index){
-          if(habit.title === "2019") {
+          if(habit.title === "2020") {
 
             // CALC THE score
             let notSet = 0;
@@ -586,8 +632,8 @@ apiRoutes.post('/signup', function(req, res) {
 
         //var startDate = new Date();
         //startDate.setDate(startDate.getDate() - 7);
-        var startDate = new Date(2019, 0, 1, 0, 0, 0, 0)
-        var endDate = new Date(2019, 11, 31, 0, 0, 0, 0);
+        var startDate = new Date(2020, 0, 1, 0, 0, 0, 0)
+        var endDate = new Date(2020, 11, 31, 0, 0, 0, 0);
 
         var theDates = [];
         //var aDate = new Date();
@@ -615,7 +661,7 @@ apiRoutes.post('/signup', function(req, res) {
         }
 
         var newHabit = {
-          title: '2019',
+          title: '2020',
           startDate: startDate,
           endDate: endDate,
           isDefault: true,
@@ -826,8 +872,8 @@ apiRoutes.post('/resetGame', function(req, res) {
         }
       });
 
-      var startDate = new Date(2019, 0, 1, 0, 0, 0, 0)
-      var endDate = new Date(2019, 11, 31, 0, 0, 0, 0);
+      var startDate = new Date(2020, 0, 1, 0, 0, 0, 0)
+      var endDate = new Date(2020, 11, 31, 0, 0, 0, 0);
 
       var theDates = [];
       //var aDate = new Date();
@@ -855,7 +901,7 @@ apiRoutes.post('/resetGame', function(req, res) {
       }
 
       var newHabit = {
-        title: '2019',
+        title: '2020',
         startDate: startDate,
         endDate: endDate,
         isDefault: true,
@@ -1019,6 +1065,56 @@ apiRoutes.post('/updateOldScore', function(req, res) {
       });
     }
   });
+});
+
+apiRoutes.post('/sendEmail', function(req, res) {
+
+  if(req.decoded.admin) {
+    // am admin so try and send mail
+
+    const emailData = {
+      from: 'matthew.denyer@overorunder.io',
+      subject: req.body.subject,
+      text: `${req.body.text}: https://overorunder.io`,
+      html: `<p>hi there,<p>${req.body.text} </p><p>change your life by playing over or under at https://overorunder.io</p>`
+    };
+
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'matthew.denyer@overorunder.io',
+        pass: 'over18181818under'
+      }
+    });
+
+
+    if(req.body.all)  {
+      // send to everyone
+
+      sendEmailAll(req.body.subject, req.body.text);
+      return res.status(200).json({success: true, message: 'attempted to send to all.'});
+
+    } else {
+      //just send to email
+      emailData.to = req.body.emailAddress;
+
+      transporter.sendMail(emailData, function(error, info){
+        if (error) {
+          return res.status(200).json({success: false, message: 'Problem sending email'});
+        } else {
+          return res.status(200).json({success: true, message: 'Email sent.'});
+        }
+      });
+
+
+    }
+  } else {
+    // not admin, return fail
+    return res.status(200).json({success: false, message: 'not authorised to send emails'});
+  }
+
+  return res.status(200).json({success: false, message: 'not authorised to send emails'});
+
 });
 
 

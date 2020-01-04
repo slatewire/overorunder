@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'react-materialize'
 import Games from './Games';
 import Settings from './Settings';
+import Email from './Email';
 import '../App/App.css';
 
 // array of ProfileActivity
@@ -18,6 +19,7 @@ class Dashboard extends Component {
     this.handleHabitSelect = this.handleHabitSelect.bind(this);
     this.handleGamesScreen = this.handleGamesScreen.bind(this);
     this.handleHabitScreen = this.handleHabitScreen.bind(this);
+    this.handleEmailScreen = this.handleEmailScreen.bind(this);
   }
 
   handleGamesScreen () {
@@ -26,6 +28,10 @@ class Dashboard extends Component {
 
   handleHabitScreen () {
     this.setState({currentScreen: "settings"});
+  }
+
+  handleEmailScreen () {
+    this.setState({currentScreen: "email"});
   }
 
   handleHabitSelect (habit) {
@@ -39,15 +45,34 @@ class Dashboard extends Component {
 
     switch(this.state.currentScreen) {
       case "menu":
-          componentToShow =
-                            <div className="centeredMenu">
-                              <div className="menuBut">
-                                <Button floating  className='menuBut teal lighten-2' waves='light' icon='games' onClick={this.handleGamesScreen}>games</Button>
+
+          if (this.props.isAdmin) {
+
+            componentToShow =
+                              <div className="centeredMenu">
+                                <div className="menuBut">
+                                  <Button floating  className='menuBut teal lighten-2' waves='light' icon='games' onClick={this.handleGamesScreen}>games</Button>
+                                </div>
+                                <div className="menuBut">
+                                  <Button floating  className=' menuBut eal lighten-2' waves='light' icon='settings' onClick={this.handleHabitScreen}>games</Button>
+                                </div>
+                                <div className="menuBut">
+                                  <Button floating  className=' menuBut eal lighten-2' waves='light' icon='email' onClick={this.handleEmailScreen}>games</Button>
+                                </div>
                               </div>
-                              <div className="menuBut">
-                                <Button floating  className=' menuBut eal lighten-2' waves='light' icon='settings' onClick={this.handleHabitScreen}>games</Button>
+
+          } else {
+
+            componentToShow =
+                              <div className="centeredMenu">
+                                <div className="menuBut">
+                                  <Button floating  className='menuBut teal lighten-2' waves='light' icon='games' onClick={this.handleGamesScreen}>games</Button>
+                                </div>
+                                <div className="menuBut">
+                                  <Button floating  className=' menuBut eal lighten-2' waves='light' icon='settings' onClick={this.handleHabitScreen}>games</Button>
+                                </div>
                               </div>
-                            </div>
+          }
 
           break;
       case "habits":
@@ -56,6 +81,9 @@ class Dashboard extends Component {
       case "settings":
         componentToShow = <Settings handleSignOut={this.props.handleSignOut} myScreenName={this.props.myScreenName} leagueSwitch={this.props.leagueSwitch} handleSetScreenName={this.props.handleSetScreenName} handleSetMyScreen={this.props.handleSetMyScreen} handleUpdateLeagueSwitch={this.props.handleUpdateLeagueSwitch}/>
         break;
+      case "email":
+        componentToShow = <Email />
+      break;
       default:
         console.log("default");
     }
