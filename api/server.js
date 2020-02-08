@@ -1117,9 +1117,33 @@ apiRoutes.post('/sendEmail', function(req, res) {
 
 });
 
+apiRoutes.post('/adminRestPwd', function(req, res) {
 
+  if(req.decoded.admin) {
 
+    User.findOne({
+      name: req.body.emailAddress
+    }, function(err, user) {
 
+      if (err) return res.status(200).json({success: false, message: 'Email address not found'});
+
+      if (user) {
+
+        user.password = req.body.subject;
+console.log("Update PWD to: ", req.body.subject);
+        //user.updateOne({name: req.body.emailAddress}, function(err) {
+        user.save( function(err) {
+          if (err) throw err;
+
+          return res.status(200).json({success: true, message: 'password has been reset, please login'});
+        });
+      }
+    });
+  } else {
+    // not admin, return fail
+    return res.status(200).json({success: false, message: 'not authorised to update pwd'});
+  }
+});
 
 // apply the routes to our application with the prefix /api
 app.use('/api', apiRoutes);
